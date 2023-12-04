@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "612625001523",
+    "firebase_url": "https://car-sharing-app-59fb6-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "car-sharing-app-59fb6",
+    "storage_bucket": "car-sharing-app-59fb6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:612625001523:android:bd2436de450b162447c746",
+        "android_client_info": {
+          "package_name": "com.example.car_sharing_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFfwejIktpOObjjhUK93-MsZdMpTG1WzU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

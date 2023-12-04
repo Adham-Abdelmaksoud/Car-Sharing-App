@@ -69,7 +69,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             children: [
                               Radio(
                                 value: 'Credit Card',
-                                groupValue: 'Credit Card',
+                                groupValue: 'Payment',
                                 onChanged: (value){}
                               ),
 
@@ -147,7 +147,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             children: [
                               Radio(
                                   value: 'Cash',
-                                  groupValue: 'Credit Card',
+                                  groupValue: 'Payment',
                                   onChanged: (value){}
                               ),
 

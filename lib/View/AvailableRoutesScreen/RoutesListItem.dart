@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import '../../resources/colors.dart';
 
 class RoutesListItem extends StatefulWidget {
-  const RoutesListItem({Key? key}) : super(key: key);
+  final route;
+  const RoutesListItem({Key? key, this.route}) : super(key: key);
 
   @override
   State<RoutesListItem> createState() => _RoutesListItemState();
@@ -12,7 +13,7 @@ class _RoutesListItemState extends State<RoutesListItem> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
@@ -25,14 +26,14 @@ class _RoutesListItemState extends State<RoutesListItem> {
             title: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('El Rehab',
+                Text(widget.route['Pickup'],
                   style: TextStyle(
                     fontSize: 19,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 SizedBox(height: 14,),
-                Text('Abbaseya',
+                Text(widget.route['Destination'],
                   style: TextStyle(
                     fontSize: 19,
                     fontWeight: FontWeight.bold,
@@ -43,7 +44,7 @@ class _RoutesListItemState extends State<RoutesListItem> {
 
             trailing: Transform.translate(
               offset: Offset(0, -10),
-              child: Text('5:30 PM',
+              child: Text(widget.route['Time'],
                   style: TextStyle(
                     fontSize: 16,
                     color: textGreyColor
@@ -52,7 +53,7 @@ class _RoutesListItemState extends State<RoutesListItem> {
             )
           ),
 
-          Text('50 EGP',
+          Text('${widget.route['Cost']} EGP',
               style: TextStyle(
                 fontSize: 19,
                 fontWeight: FontWeight.bold,

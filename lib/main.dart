@@ -1,18 +1,22 @@
 import 'package:car_sharing_app/resources/colors.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'Screens/SplashScreen/SplashScreen.dart';
-import 'Screens/SignupScreen/SignupScreen.dart';
-import 'Screens/LoginScreen/LoginScreen.dart';
-import 'Screens/AppMainScreen/AppMainScreen.dart';
-import 'Screens/PaymentScreen/PaymentScreen.dart';
-import 'Screens/TripDetailsScreen/TripDetailsScreen.dart';
-import 'Screens/AvailableRoutesScreen/AvailableRoutesScreen.dart';
+import 'View/SplashScreen/SplashScreen.dart';
+import 'View/SignupScreen/SignupScreen.dart';
+import 'View/LoginScreen/LoginScreen.dart';
+import 'View/AppMainScreen/AppMainScreen.dart';
+import 'View/PaymentScreen/PaymentScreen.dart';
+import 'View/TripDetailsScreen/TripDetailsScreen.dart';
+import 'View/AvailableRoutesScreen/AvailableRoutesScreen.dart';
 
-void main(){
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
   runApp(
     MaterialApp(
       title: 'CarPool',
-      home: AppMainScreen(),
+      home: SplashScreen(),
       debugShowCheckedModeBanner: false,
       theme: ThemeData().copyWith(
         colorScheme: ThemeData().colorScheme.copyWith(

@@ -1,4 +1,4 @@
-import 'package:car_sharing_app/Screens/AppMainScreen/RoutesListItem.dart';
+import 'package:car_sharing_app/View/AppMainScreen/RoutesListItem.dart';
 import 'package:car_sharing_app/resources/colors.dart';
 import 'package:flutter/material.dart';
 
@@ -24,7 +24,7 @@ class _CartFragmentState extends State<CartFragment> {
                 color: Colors.black
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 5),
+                padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 6),
                 child: ListView.builder(
                     itemCount: 20,
                     itemBuilder: (context, index){
@@ -42,10 +42,15 @@ class _CartFragmentState extends State<CartFragment> {
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
             child: ElevatedButton(
               onPressed: (){},
-              child: Text('Make Payment'),
+              child: Text('Make Payment',
+                style: TextStyle(
+                  color: Colors.white
+                ),
+              ),
               style: TextButton.styleFrom(
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
                 fixedSize: Size(1000, 45),
+                backgroundColor: secondaryColor
               ),
             ),
           ),

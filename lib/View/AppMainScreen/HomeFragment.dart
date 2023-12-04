@@ -1,3 +1,4 @@
+import 'package:car_sharing_app/View/AvailableRoutesScreen/AvailableRoutesScreen.dart';
 import 'package:car_sharing_app/resources/colors.dart';
 import 'package:flutter/material.dart';
 
@@ -9,6 +10,14 @@ class HomeFragment extends StatefulWidget {
 }
 
 class _HomeFragmentState extends State<HomeFragment> {
+  void navigateToAvailableRoutes(){
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => AvailableRoutesScreen()
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
@@ -34,7 +43,10 @@ class _HomeFragmentState extends State<HomeFragment> {
                           child: Container(
                             color: bluishWhite,
                             child: TextField(
-                              onTap: (){},
+                              readOnly: true,
+                              onTap: (){
+                                navigateToAvailableRoutes();
+                              },
                               decoration: InputDecoration(
                                 hintText: 'Pickup Location',
                                 prefixIcon: Icon(Icons.location_on_outlined),
@@ -52,7 +64,10 @@ class _HomeFragmentState extends State<HomeFragment> {
                           child: Container(
                             color: bluishWhite,
                             child: TextField(
-                              onTap: (){},
+                              readOnly: true,
+                              onTap: (){
+                                navigateToAvailableRoutes();
+                              },
                               decoration: InputDecoration(
                                 hintText: 'Destination',
                                 prefixIcon: Icon(Icons.location_on),
@@ -67,15 +82,19 @@ class _HomeFragmentState extends State<HomeFragment> {
                         SizedBox(height: 25,),
 
                         ElevatedButton(
-                          onPressed: (){},
+                          onPressed: (){
+                            navigateToAvailableRoutes();
+                          },
                           child: Text('Find a Ride',
                             style: TextStyle(
-                              fontSize: 17
+                              fontSize: 17,
+                              color: Colors.white
                             ),
                           ),
                           style: TextButton.styleFrom(
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
                             fixedSize: Size(1000, 53),
+                            backgroundColor: secondaryColor
                           ),
                         ),
                       ],
