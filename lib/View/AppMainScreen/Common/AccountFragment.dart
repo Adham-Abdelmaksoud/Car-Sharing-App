@@ -4,7 +4,7 @@ import 'package:car_sharing_app/resources/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../Model/UserAuthentication.dart';
+import '../../../Model/UserAuthentication.dart';
 
 class AccountFragment extends StatefulWidget {
   final Map currentUser;

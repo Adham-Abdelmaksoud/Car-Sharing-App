@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:car_sharing_app/View/PassengerMainScreen/PassengerMainScreen.dart';
 import 'package:car_sharing_app/View/SignupScreen/SignupScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Model/UserAuthentication.dart';
 import '../../resources/colors.dart';
+import '../AppMainScreen/Common/AppMainScreen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -31,7 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void navigateToMainScreen(){
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-          builder: (context) => PassengerMainScreen()
+          builder: (context) => AppMainScreen()
       ),
     );
   }

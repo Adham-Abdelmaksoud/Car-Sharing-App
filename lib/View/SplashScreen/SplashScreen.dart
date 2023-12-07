@@ -1,10 +1,10 @@
+import 'package:car_sharing_app/View/AppMainScreen/Common/AppMainScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 
 import '../../resources/colors.dart';
 import '../LoginScreen/LoginScreen.dart';
-import '../PassengerMainScreen/PassengerMainScreen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -17,14 +17,14 @@ class _SplashScreenState extends State<SplashScreen> {
   void navigateToMainScreen(){
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-          builder: (context) => PassengerMainScreen()
+        builder: (context) => AppMainScreen()
       ),
     );
   }
   void navigateToLoginScreen(){
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-          builder: (context) => LoginScreen()
+        builder: (context) => LoginScreen()
       ),
     );
   }

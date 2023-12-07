@@ -16,7 +16,7 @@ class UserDatabase{
       'Username': username,
       'Email': email,
       'Phonenumber': phoneNumber,
-      'Role': role
+      'Role': role,
     };
     dbRef.set(user);
   }

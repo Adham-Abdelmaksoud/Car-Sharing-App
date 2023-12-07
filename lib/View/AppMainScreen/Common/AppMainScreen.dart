@@ -2,22 +2,24 @@ import 'package:car_sharing_app/Model/UserDatabase.dart';
 import 'package:car_sharing_app/resources/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../Passenger/HistoryFragment.dart';
+import '../Passenger/HomeFragment.dart';
 import 'AccountFragment.dart';
-import 'HistoryFragment.dart';
-import 'CartFragment.dart';
-import 'HomeFragment.dart';
+import '../Driver/DriverRoutesFragment.dart';
+import '../Passenger/CartFragment.dart';
 
-class PassengerMainScreen extends StatefulWidget {
-  const PassengerMainScreen({Key? key}) : super(key: key);
+class AppMainScreen extends StatefulWidget {
+  const AppMainScreen({Key? key}) : super(key: key);
 
   @override
-  State<PassengerMainScreen> createState() => _PassengerMainScreenState();
+  State<AppMainScreen> createState() => _AppMainScreenState();
 }
 
-class _PassengerMainScreenState extends State<PassengerMainScreen> {
+class _AppMainScreenState extends State<AppMainScreen> {
   int currentFragmentIndex = 0;
   Map? currentUser;
   List? screenFragments;
+  List<BottomNavigationBarItem>? bottomNavigationItems;
 
   UserDatabase db = UserDatabase();
 
@@ -25,14 +27,52 @@ class _PassengerMainScreenState extends State<PassengerMainScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? userId = prefs.getString('userId');
     currentUser = await db.getUserInfo(userId!);
-    setState(() {
-      screenFragments = [
-        HomeFragment(),
-        CartFragment(),
-        HistoryFragment(),
-        AccountFragment(currentUser: currentUser!,),
-      ];
-    });
+    if(currentUser!['Role'] == 'Passenger'){
+      setState(() {
+        screenFragments = [
+          HomeFragment(),
+          CartFragment(),
+          HistoryFragment(),
+          AccountFragment(currentUser: currentUser!,),
+        ];
+        bottomNavigationItems = [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.card_travel),
+            label: 'Cart',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.history),
+            label: 'History',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Account',
+          ),
+        ];
+      });
+    }
+    else if(currentUser!['Role'] == 'Driver'){
+      setState(() {
+        screenFragments = [
+          DriverRoutesFragment(),
+          AccountFragment(currentUser: currentUser!,),
+        ];
+        bottomNavigationItems = [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.route),
+            label: 'Routes',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Account',
+          ),
+        ];
+      });
+    }
     return screenFragments!;
   }
 
@@ -40,6 +80,9 @@ class _PassengerMainScreenState extends State<PassengerMainScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('rememberMe');
   }
+
+
+
 
   @override
   void initState() {
@@ -84,24 +127,7 @@ class _PassengerMainScreenState extends State<PassengerMainScreen> {
                     currentFragmentIndex = index;
                   });
                 },
-                items: [
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.home),
-                    label: 'Home',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.card_travel),
-                    label: 'Cart',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.history),
-                    label: 'History',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.person),
-                    label: 'Account',
-                  ),
-                ],
+                items: bottomNavigationItems!
               ),
             ),
           );

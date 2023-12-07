@@ -18,11 +18,6 @@ class _AvailableRoutesScreenState extends State<AvailableRoutesScreen> {
 
   RouteDatabase routesDB = RouteDatabase();
 
-  Future<List> getRoutesList() async{
-    List routes = await routesDB.getAllRoutes();
-    return routes;
-  }
-
   List filterRoutes(routes, pickupFilter, destinationFilter){
     List filteredRoutes = List.from(routes);
     if(pickupFilter != ''){
@@ -92,8 +87,9 @@ class _AvailableRoutesScreenState extends State<AvailableRoutesScreen> {
                   stream: FirebaseDatabase.instance.ref().child('Routes').onValue,
                   builder: (context, snapshot) {
                     if(snapshot.hasData){
-                      List routes = snapshot.data!.snapshot.value as List;
-                      List filteredRoutes = filterRoutes(routes, pickupFilter, destinationFilter);
+                      Map routesMap = snapshot.data!.snapshot.value as Map;
+                      List routesList = routesMap.values.toList();
+                      List filteredRoutes = filterRoutes(routesList, pickupFilter, destinationFilter);
                       return ListView.builder(
                         itemCount: filteredRoutes.length,
                         itemBuilder: (context, index) {
