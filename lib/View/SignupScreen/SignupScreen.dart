@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:car_sharing_app/Model/UserDatabase.dart';
 import 'package:car_sharing_app/View/LoginScreen/LoginScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,27 +20,59 @@ class _SignupScreenState extends State<SignupScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
+  TextEditingController phoneNumberController = TextEditingController();
   GlobalKey<FormState> signUpKey = GlobalKey();
 
-  UserAuthenticator auth = UserAuthenticator();
-  UserDatabase db = UserDatabase();
+  UserAuthenticator userAuth = UserAuthenticator();
+  UserDatabase userDB = UserDatabase();
+
+  List userRoles = [
+    'Passenger',
+    'Driver'
+  ];
+  String roleValue = 'Passenger';
+  bool loading = false;
+  bool failedSignUp = false;
+  String signUpErrorMessage = '';
 
   void signUp() async{
     String email = emailController.text;
     String password = passwordController.text;
-    User? user = await auth.signUpWithEmailAndPassword(email, password);
+    setState(() {
+      loading = true;
+    });
+    User? user = await userAuth.signUpWithEmailAndPassword(email, password);
     if(user != null){
-      db.registerUser(
-          user!.uid,
-          usernameController.text,
-          emailController.text,
-          passwordController.text
+      userDB.registerUser(
+        user!.uid,
+        usernameController.text,
+        emailController.text,
+        phoneNumberController.text,
+        roleValue
       );
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => LoginScreen()
         ),
       );
+    }
+    else{
+      try {
+        final result = await InternetAddress.lookup('google.com');
+        if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+          setState(() {
+            loading = false;
+            failedSignUp = true;
+            signUpErrorMessage = 'This Email is already used by another account!';
+          });
+        }
+      } on SocketException catch (_) {
+        setState(() {
+          loading = false;
+          failedSignUp = true;
+          signUpErrorMessage = 'Unable to connect to internet';
+        });
+      }
     }
   }
 
@@ -51,7 +85,7 @@ class _SignupScreenState extends State<SignupScreen> {
           SliverFillRemaining(
             hasScrollBody: false,
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 45),
+              padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 40),
               child: Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -77,28 +111,89 @@ class _SignupScreenState extends State<SignupScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: SizedBox(
+                                  height: 60,
+                                  child: TextFormField(
+                                    cursorHeight: 20,
+                                    controller: usernameController,
+                                    validator: (value){
+                                      if(value == null || value.isEmpty){
+                                        return 'Username is required';
+                                      }
+                                      else{
+                                        return null;
+                                      }
+                                    },
+                                    decoration: InputDecoration(
+                                      hintText: "Username",
+                                      hintStyle: TextStyle(
+                                          fontWeight: FontWeight.normal
+                                      )
+                                    ),
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      height: 1
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                              SizedBox(width: 10,),
+
+                              DropdownButton(
+                                dropdownColor: primaryColor,
+                                value: roleValue,
+                                items: userRoles.map((value){
+                                  return DropdownMenuItem(
+                                    value: value,
+                                    child: Text(value,
+                                      style: TextStyle(
+                                        fontSize: 15
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                                onChanged: (value){
+                                  setState(() {
+                                    roleValue = value.toString();
+                                  });
+                                },
+                              )
+                            ],
+                          ),
+
+                          SizedBox(height: 10,),
+
                           SizedBox(
                             height: 60,
                             child: TextFormField(
+                              keyboardType: TextInputType.number,
                               cursorHeight: 20,
-                              controller: usernameController,
+                              controller: phoneNumberController,
                               validator: (value){
                                 if(value == null || value.isEmpty){
-                                  return 'Username is required';
+                                  return 'Phone Number is required!';
+                                }
+                                else if(phoneNumberController.text.length != 11){
+                                  return 'Invalid Phone Number!';
                                 }
                                 else{
                                   return null;
                                 }
                               },
                               decoration: InputDecoration(
-                                hintText: "Username",
-                                hintStyle: TextStyle(
-                                    fontWeight: FontWeight.normal
-                                )
+                                  hintText: "Phone Number",
+                                  hintStyle: TextStyle(
+                                      fontWeight: FontWeight.normal
+                                  )
                               ),
                               style: TextStyle(
-                                fontSize: 18,
-                                height: 1
+                                  fontSize: 18,
+                                  height: 1
                               ),
                             ),
                           ),
@@ -115,7 +210,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                   return 'Email is required';
                                 }
                                 else if(!RegExp(r"^[a-zA-Z0-9a-zA-Z0-9]+@eng.asu.edu.eg").hasMatch(emailController.text)){
-                                  return 'Invalid Email!';
+                                  return 'Email should have the domain eng.asu.edu.eg!';
                                 }
                                 else{
                                   return null;
@@ -145,8 +240,8 @@ class _SignupScreenState extends State<SignupScreen> {
                                 if(value == null || value.isEmpty){
                                   return 'Password is required!';
                                 }
-                                else if(passwordController.text.length < 6){
-                                  return 'Password length must be above 6 characters';
+                                else if(passwordController.text.length < 5){
+                                  return 'Password length must be above 5 characters';
                                 }
                                 else{
                                   return null;
@@ -214,12 +309,27 @@ class _SignupScreenState extends State<SignupScreen> {
                             signUp();
                           }
                         },
-                        child: Text('Signup',
+                        child: loading? SizedBox(
+                          width: 25,
+                          height: 25,
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        ) : Text('Signup',
                           style: TextStyle(
                             fontSize: 17,
                             color: Colors.white
                           ),
                         )
+                    ),
+
+                    SizedBox(height: 10,),
+
+                    Text(signUpErrorMessage,
+                      style: TextStyle(
+                          color: errorColor,
+                          fontSize: failedSignUp? 14: 0
+                      ),
                     ),
 
                     Row(

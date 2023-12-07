@@ -7,14 +7,14 @@ import 'HistoryFragment.dart';
 import 'CartFragment.dart';
 import 'HomeFragment.dart';
 
-class AppMainScreen extends StatefulWidget {
-  const AppMainScreen({Key? key}) : super(key: key);
+class PassengerMainScreen extends StatefulWidget {
+  const PassengerMainScreen({Key? key}) : super(key: key);
 
   @override
-  State<AppMainScreen> createState() => _AppMainScreenState();
+  State<PassengerMainScreen> createState() => _PassengerMainScreenState();
 }
 
-class _AppMainScreenState extends State<AppMainScreen> {
+class _PassengerMainScreenState extends State<PassengerMainScreen> {
   int currentFragmentIndex = 0;
   Map? currentUser;
   List? screenFragments;
@@ -34,6 +34,11 @@ class _AppMainScreenState extends State<AppMainScreen> {
       ];
     });
     return screenFragments!;
+  }
+
+  void removeSharedPreferences() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('rememberMe');
   }
 
   @override
@@ -102,7 +107,8 @@ class _AppMainScreenState extends State<AppMainScreen> {
           );
         }
         else if(snapshot.hasError){
-          return Text('Some Error Occurred');
+          removeSharedPreferences();
+          return Center(child: Text('Some Error Occurred'));
         }
         else{
           return Scaffold(

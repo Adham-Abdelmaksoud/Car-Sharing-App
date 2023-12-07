@@ -9,13 +9,14 @@ class UserDatabase{
     return user;
   }
 
-  void registerUser(String id, String username, String email, String password){
+  void registerUser(String id, String username, String email, String phoneNumber, String role){
     final dbRef = FirebaseDatabase.instance.ref().child('Users').child(id);
 
     Map user = {
       'Username': username,
       'Email': email,
-      'Password': password
+      'Phonenumber': phoneNumber,
+      'Role': role
     };
     dbRef.set(user);
   }

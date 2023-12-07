@@ -1,6 +1,5 @@
 import 'package:car_sharing_app/Model/RouteDatabase.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import '../../resources/colors.dart';
 import 'RoutesListItem.dart';
@@ -13,27 +12,30 @@ class AvailableRoutesScreen extends StatefulWidget {
 }
 
 class _AvailableRoutesScreenState extends State<AvailableRoutesScreen> {
-  List actualRoutes = [];
-  List filteredRoutes = [];
   bool loading = false;
+  String pickupFilter = '';
+  String destinationFilter = '';
 
   RouteDatabase routesDB = RouteDatabase();
 
-  void getRoutesList() async{
-    setState(() {
-      loading = true;
-    });
-    actualRoutes = await routesDB.getAllRoutes();
-    filteredRoutes = List.from(actualRoutes);
-    setState(() {
-      loading = false;
-    });
+  Future<List> getRoutesList() async{
+    List routes = await routesDB.getAllRoutes();
+    return routes;
   }
 
-  @override
-  void initState() {
-    getRoutesList();
-    super.initState();
+  List filterRoutes(routes, pickupFilter, destinationFilter){
+    List filteredRoutes = List.from(routes);
+    if(pickupFilter != ''){
+      filteredRoutes = routes.where((element){
+        return element['Pickup'].toLowerCase().contains(pickupFilter.toLowerCase()) as bool;
+      }).toList();
+    }
+    if(destinationFilter != ''){
+      filteredRoutes = filteredRoutes.where((element){
+        return element['Destination'].toLowerCase().contains(destinationFilter.toLowerCase()) as bool;
+      }).toList();
+    }
+    return filteredRoutes;
   }
 
   @override
@@ -50,18 +52,9 @@ class _AvailableRoutesScreenState extends State<AvailableRoutesScreen> {
           TextField(
             cursorColor: secondaryColor,
             onChanged: (value){
-              if(value != ''){
-                setState(() {
-                  filteredRoutes = actualRoutes.where((element){
-                    return element['Pickup'].toLowerCase().contains(value.toLowerCase());
-                  }).toList();
-                });
-              }
-              else{
-                setState(() {
-                  filteredRoutes = List.from(actualRoutes);
-                });
-              }
+              setState(() {
+                pickupFilter = value;
+              });
             },
             decoration: InputDecoration(
               hintText: 'Pickup Location',
@@ -78,18 +71,9 @@ class _AvailableRoutesScreenState extends State<AvailableRoutesScreen> {
           TextField(
             cursorColor: secondaryColor,
             onChanged: (value){
-              if(value != ''){
-                setState(() {
-                  filteredRoutes = actualRoutes.where((element){
-                      return element['Destination'].toLowerCase().contains(value.toLowerCase());
-                  }).toList();
-                });
-              }
-              else{
-                setState(() {
-                  filteredRoutes = List.from(actualRoutes);
-                });
-              }
+              setState(() {
+                destinationFilter = value;
+              });
             },
             decoration: InputDecoration(
               hintText: 'Destination',
@@ -104,22 +88,37 @@ class _AvailableRoutesScreenState extends State<AvailableRoutesScreen> {
               ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-                child: loading? Center(
-                  child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
-                  ),
-                ) : ListView.builder(
-                  itemCount: filteredRoutes.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 1),
-                      child: Card(
-                        color: primaryColor,
-                        child: RoutesListItem(
-                          route: filteredRoutes[index],
+                child: StreamBuilder(
+                  stream: FirebaseDatabase.instance.ref().child('Routes').onValue,
+                  builder: (context, snapshot) {
+                    if(snapshot.hasData){
+                      List routes = snapshot.data!.snapshot.value as List;
+                      List filteredRoutes = filterRoutes(routes, pickupFilter, destinationFilter);
+                      return ListView.builder(
+                        itemCount: filteredRoutes.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 1),
+                            child: Card(
+                              color: primaryColor,
+                              child: RoutesListItem(
+                                route: filteredRoutes[index],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    }
+                    else if(snapshot.hasError){
+                      return Center(child: Text('Some Error Occurred!'));
+                    }
+                    else{
+                      return Center(
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
                         ),
-                      ),
-                    );
+                      );
+                    }
                   },
                 ),
               ),

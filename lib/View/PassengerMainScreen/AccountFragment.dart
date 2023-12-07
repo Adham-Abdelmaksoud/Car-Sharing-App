@@ -30,11 +30,6 @@ class _AccountFragmentState extends State<AccountFragment> {
   }
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return CustomScrollView(
       slivers: [
@@ -102,7 +97,7 @@ class _AccountFragmentState extends State<AccountFragment> {
 
                                   SizedBox(height: 30,),
 
-                                  Row(
+                                  Wrap(
                                     children: [
                                       Text('Email: ',
                                         style: TextStyle(
@@ -122,13 +117,13 @@ class _AccountFragmentState extends State<AccountFragment> {
 
                                   Row(
                                     children: [
-                                      Text('Password: ',
+                                      Text('Role: ',
                                         style: TextStyle(
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold
                                         ),
                                       ),
-                                      Text(widget.currentUser!['Password'],
+                                      Text(widget.currentUser!['Role'],
                                         style: TextStyle(
                                           fontSize: 20
                                         ),
@@ -146,7 +141,7 @@ class _AccountFragmentState extends State<AccountFragment> {
                                             fontWeight: FontWeight.bold
                                         ),
                                       ),
-                                      Text('01012345678',
+                                      Text(widget.currentUser!['Phonenumber'],
                                         style: TextStyle(
                                             fontSize: 20
                                         ),

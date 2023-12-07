@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 bool authenticateTestCredentials(email, password){
   email = email.trim();
-  if(email == 'test@eng.asu.edu.eg' && password == 'user1234'){
+  if(email == 'passenger@eng.asu.edu.eg' && password == 'test1234'){
     return true;
   }
   return false;

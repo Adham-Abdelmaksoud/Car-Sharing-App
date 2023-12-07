@@ -1,3 +1,4 @@
+import 'package:car_sharing_app/View/TripDetailsScreen/TripDetailsScreen.dart';
 import 'package:flutter/material.dart';
 import '../../resources/colors.dart';
 
@@ -18,6 +19,13 @@ class _RoutesListItemState extends State<RoutesListItem> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           ListTile(
+            onTap: (){
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => TripDetailsScreen(route: widget.route)
+                )
+              );
+            },
             minLeadingWidth: 0,
             contentPadding: EdgeInsets.all(0),
 

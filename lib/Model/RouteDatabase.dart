@@ -8,18 +8,4 @@ class RouteDatabase{
     List routes = snapshot.value as List;
     return routes;
   }
-
-
-
-
-  void registerUser(String id, String username, String email, String password){
-    final dbRef = FirebaseDatabase.instance.ref().child('Users').child(id);
-
-    Map user = {
-      'Username': username,
-      'Email': email,
-      'Password': password
-    };
-    dbRef.set(user);
-  }
 }

@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:car_sharing_app/View/AppMainScreen/AppMainScreen.dart';
+import 'package:car_sharing_app/View/PassengerMainScreen/PassengerMainScreen.dart';
 import 'package:car_sharing_app/View/SignupScreen/SignupScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -26,12 +26,12 @@ class _LoginScreenState extends State<LoginScreen> {
   bool failedLogin = false;
   String loginErrorMessage = '';
 
-  UserAuthenticator auth = UserAuthenticator();
+  UserAuthenticator userAuth = UserAuthenticator();
 
   void navigateToMainScreen(){
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-          builder: (context) => AppMainScreen()
+          builder: (context) => PassengerMainScreen()
       ),
     );
   }
@@ -39,7 +39,10 @@ class _LoginScreenState extends State<LoginScreen> {
   void signIn() async{
     String email = emailController.text;
     String password = passwordController.text;
-    User? user = await auth.signInWithEmailAndPassword(email, password);
+    setState(() {
+      loading = true;
+    });
+    User? user = await userAuth.signInWithEmailAndPassword(email, password);
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     if(user != null){
@@ -51,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
     else if(authenticateTestCredentials(email, password)){
       navigateToMainScreen();
-      prefs.setString('userId', '0');
+      prefs.setString('userId', 'TestPassenger');
       if(rememberMe){
         prefs.setBool('rememberMe', true);
       }
@@ -220,9 +223,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       onPressed: (){
                         if(loginKey.currentState!.validate()){
-                          setState(() {
-                            loading = true;
-                          });
                           signIn();
                         }
                       },
