@@ -1,62 +1,80 @@
 import 'package:car_sharing_app/resources/colors.dart';
 import 'package:flutter/material.dart';
 
-import 'RoutesListItem.dart';
+import '../../../Model/UserDatabase.dart';
+import 'CartListItem.dart';
 
 class CartFragment extends StatefulWidget {
-  const CartFragment({Key? key}) : super(key: key);
+  final String userId;
+  const CartFragment({Key? key, required this.userId}) : super(key: key);
 
   @override
   State<CartFragment> createState() => _CartFragmentState();
 }
 
 class _CartFragmentState extends State<CartFragment> {
+  UserDatabase userDB = UserDatabase();
+
+  Future<List> getCartList() async{
+    List cartItems = await userDB.getPassengerCartRoutes(widget.userId);
+    return cartItems;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: bluishWhite
-      ),
-      child: Column(
-        children: [
-          Expanded(
+    return FutureBuilder(
+      future: getCartList(),
+      builder: (context, snapshot) {
+        if(snapshot.hasData){
+          return Container(
+            decoration: BoxDecoration(
+                color: bluishWhite
+            ),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.black
+                  color: Colors.black
               ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 6),
                 child: ListView.builder(
-                    itemCount: 20,
+                    itemCount: snapshot.data!.length,
                     itemBuilder: (context, index){
                       return Card(
                         color: primaryColor,
-                        child: RoutesListItem()
+                        child: CartListItem(userId: widget.userId, route: snapshot.data![index])
                       );
                     }
                 ),
               ),
             ),
-          ),
-
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
-            child: ElevatedButton(
-              onPressed: (){},
-              child: Text('Make Payment',
+          );
+        }
+        else if(snapshot.hasError){
+          return Container(
+            color: Colors.black,
+            child: Center(
+              child: Text('Cart is Empty!',
+                textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: Colors.white
-                ),
-              ),
-              style: TextButton.styleFrom(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-                fixedSize: Size(1000, 45),
-                backgroundColor: secondaryColor
+                  color: primaryColor,
+                  fontSize: 40,
+                  fontWeight: FontWeight.bold
+                )
+              )
+            ),
+          );
+        }
+        else{
+          return Container(
+            color: Colors.black,
+            child: Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
               ),
             ),
-          ),
-        ],
-      ),
+          );
+        }
+      },
     );
   }
 }

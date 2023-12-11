@@ -1,4 +1,5 @@
 import 'package:car_sharing_app/Model/UserDatabase.dart';
+import 'package:car_sharing_app/View/AppMainScreen/Driver/PendingOrdersFragment.dart';
 import 'package:car_sharing_app/resources/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -31,8 +32,8 @@ class _AppMainScreenState extends State<AppMainScreen> {
       setState(() {
         screenFragments = [
           HomeFragment(),
-          CartFragment(),
-          HistoryFragment(),
+          CartFragment(userId: userId),
+          HistoryFragment(userId: userId),
           AccountFragment(currentUser: currentUser!,),
         ];
         bottomNavigationItems = [
@@ -59,12 +60,17 @@ class _AppMainScreenState extends State<AppMainScreen> {
       setState(() {
         screenFragments = [
           DriverRoutesFragment(),
+          PendingOrdersFragment(driverId: userId,),
           AccountFragment(currentUser: currentUser!,),
         ];
         bottomNavigationItems = [
           BottomNavigationBarItem(
             icon: Icon(Icons.route),
             label: 'Routes',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.pending_actions),
+            label: 'Orders',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
@@ -81,14 +87,12 @@ class _AppMainScreenState extends State<AppMainScreen> {
     prefs.remove('rememberMe');
   }
 
-
-
-
   @override
   void initState() {
     getCurrentUser();
     super.initState();
   }
+
 
   @override
   Widget build(BuildContext context) {

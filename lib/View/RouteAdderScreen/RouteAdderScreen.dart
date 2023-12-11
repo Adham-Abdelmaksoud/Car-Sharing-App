@@ -96,6 +96,7 @@ class _RoutesAdderScreenState extends State<RoutesAdderScreen> {
                         textFieldSeparation(),
 
                         TextFormField(
+                          keyboardType: TextInputType.number,
                           controller: costController,
                           validator: (value){
                             if(value == null || value.isEmpty){

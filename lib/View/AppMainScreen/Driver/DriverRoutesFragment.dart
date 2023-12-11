@@ -1,9 +1,9 @@
-import 'package:car_sharing_app/Model/RouteDatabase.dart';
 import 'package:car_sharing_app/View/RouteAdderScreen/RouteAdderScreen.dart';
 import 'package:car_sharing_app/resources/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../Model/UserDatabase.dart';
 import 'RoutesListItem.dart';
 
 class DriverRoutesFragment extends StatefulWidget {
@@ -14,12 +14,12 @@ class DriverRoutesFragment extends StatefulWidget {
 }
 
 class _DriverRoutesFragmentState extends State<DriverRoutesFragment> {
-  RouteDatabase routeDB = RouteDatabase();
+  UserDatabase userDB = UserDatabase();
 
   Future<List> getRoutesList() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? userId = prefs.getString('userId');
-    List routes = await routeDB.getUserRoutes(userId!);
+    List routes = await userDB.getDriverRoutes(userId!);
     return routes;
   }
 

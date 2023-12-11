@@ -33,6 +33,13 @@ class _AvailableRoutesScreenState extends State<AvailableRoutesScreen> {
     return filteredRoutes;
   }
 
+  List getFilteredRoutesList(DatabaseEvent streamSnapshotData){
+    Map routesMap = streamSnapshotData.snapshot.value as Map;
+    List routesList = routesMap.values.toList();
+    List filteredRoutes = filterRoutes(routesList, pickupFilter, destinationFilter);
+    return filteredRoutes;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,12 +91,10 @@ class _AvailableRoutesScreenState extends State<AvailableRoutesScreen> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
                 child: StreamBuilder(
-                  stream: FirebaseDatabase.instance.ref().child('Routes').onValue,
+                  stream: routesDB.getRoutesDatabaseReference().onValue,
                   builder: (context, snapshot) {
                     if(snapshot.hasData){
-                      Map routesMap = snapshot.data!.snapshot.value as Map;
-                      List routesList = routesMap.values.toList();
-                      List filteredRoutes = filterRoutes(routesList, pickupFilter, destinationFilter);
+                      List filteredRoutes = getFilteredRoutesList(snapshot.data!);
                       return ListView.builder(
                         itemCount: filteredRoutes.length,
                         itemBuilder: (context, index) {

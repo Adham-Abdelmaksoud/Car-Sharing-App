@@ -1,29 +1,19 @@
-import 'package:car_sharing_app/Model/RouteDatabase.dart';
-import 'package:car_sharing_app/View/TripDetailsScreen/TripDetailsScreen.dart';
+import 'package:car_sharing_app/Model/UserDatabase.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../../Model/UserDatabase.dart';
-import '../../resources/colors.dart';
+import '../../../resources/colors.dart';
+import '../../TripDetailsScreen/TripDetailsScreen.dart';
 
-class RoutesListItem extends StatefulWidget {
+class CartListItem extends StatefulWidget {
+  final userId;
   final route;
-  const RoutesListItem({Key? key, this.route}) : super(key: key);
+  const CartListItem({Key? key, this.userId, this.route}) : super(key: key);
 
   @override
-  State<RoutesListItem> createState() => _RoutesListItemState();
+  State<CartListItem> createState() => _CartListItemState();
 }
 
-class _RoutesListItemState extends State<RoutesListItem> {
-  String addToCartMessage = "";
-
+class _CartListItemState extends State<CartListItem> {
   UserDatabase userDB = UserDatabase();
-
-  Future<bool> addTripToCart() async{
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? userId = prefs.getString('userId');
-    bool statusCode = await userDB.addRouteToPassengerCart(userId!, widget.route);
-    return statusCode;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +23,13 @@ class _RoutesListItemState extends State<RoutesListItem> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           ListTile(
+            onTap: (){
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => TripDetailsScreen(passengerId: widget.userId, route: widget.route)
+                )
+              );
+            },
             minLeadingWidth: 0,
             contentPadding: EdgeInsets.all(0),
 
@@ -87,24 +84,10 @@ class _RoutesListItemState extends State<RoutesListItem> {
             width: 45,
             child: FloatingActionButton(
               backgroundColor: secondaryColor,
-              onPressed: () async{
-                bool statusCode = await addTripToCart();
-                setState(() {
-                  addToCartMessage = statusCode? "Trip added to Cart": "Trip already added";
-                });
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    duration: Duration(milliseconds: 750),
-                    backgroundColor: secondaryColor,
-                    content: Text(addToCartMessage,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold
-                      ),
-                    ),
-                  )
-                );
+              onPressed: (){
+                userDB.removeRouteFromPassengerHistory(widget.userId, widget.route['Key']);
               },
-              child: Icon(Icons.add,
+              child: Icon(Icons.remove,
                 color: Colors.white,
               ),
             ),

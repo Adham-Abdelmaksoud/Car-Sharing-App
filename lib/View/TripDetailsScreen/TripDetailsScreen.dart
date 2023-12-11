@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../../Model/UserDatabase.dart';
 import '../../resources/colors.dart';
 
 class TripDetailsScreen extends StatefulWidget {
   final route;
-  const TripDetailsScreen({Key? key, this.route}) : super(key: key);
+  final passengerId;
+  const TripDetailsScreen({Key? key, this.passengerId, this.route}) : super(key: key);
 
   @override
   State<TripDetailsScreen> createState() => _TripDetailsScreenState();
@@ -35,6 +37,24 @@ Widget DetailsDivider(){
 class _TripDetailsScreenState extends State<TripDetailsScreen> {
   String paymentType = 'Cash';
   int numberOfSeats = 1;
+  int totalPrice = 0;
+
+  UserDatabase userDB = UserDatabase();
+
+  void submitOrder(){
+    widget.route['Cost'] = totalPrice;
+    widget.route['Seats'] = numberOfSeats;
+    widget.route['Payment'] = paymentType;
+    widget.route['Status'] = 'Pending';
+    widget.route['PassengerId'] = widget.passengerId;
+    userDB.submitOrder(widget.route);
+  }
+
+  @override
+  void initState() {
+    totalPrice = int.parse(widget.route['Cost']);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -139,7 +159,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text('${widget.route['Cost']} EGP',
+                                        Text('${totalPrice} EGP',
                                           style: TextStyle(
                                             fontSize: 25,
                                             fontWeight: FontWeight.bold,
@@ -162,6 +182,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                                                   onPressed: (){
                                                     setState(() {
                                                       numberOfSeats++;
+                                                      totalPrice = numberOfSeats * int.parse(widget.route['Cost']);
                                                     });
                                                   },
                                                   icon: Icon(Icons.add_circle_outline,
@@ -181,6 +202,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                                                     if(numberOfSeats > 1){
                                                       setState(() {
                                                         numberOfSeats--;
+                                                        totalPrice = numberOfSeats * int.parse(widget.route['Cost']);
                                                       });
                                                     }
                                                   },
@@ -320,8 +342,11 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: secondaryColor,
                                   ),
-                                  onPressed: (){},
-                                  child: Text('Add to Cart',
+                                  onPressed: (){
+                                    submitOrder();
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text('Confirm Order',
                                     style: TextStyle(
                                       fontSize: 16,
                                       color: Colors.white,

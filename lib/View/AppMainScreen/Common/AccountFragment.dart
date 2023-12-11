@@ -141,7 +141,7 @@ class _AccountFragmentState extends State<AccountFragment> {
                                             fontWeight: FontWeight.bold
                                         ),
                                       ),
-                                      Text(widget.currentUser!['Phonenumber'],
+                                      Text(widget.currentUser!['PhoneNumber'],
                                         style: TextStyle(
                                             fontSize: 20
                                         ),
