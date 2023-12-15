@@ -13,6 +13,19 @@ class OrdersListItem extends StatefulWidget {
 class _OrdersListItemState extends State<OrdersListItem> {
   UserDatabase userDB = UserDatabase();
 
+  Color getStatusColor(String status){
+    if(status == 'Pending'){
+      return textGreyColor;
+    }
+    else if(status == 'Confirmed'){
+      return moneyColor;
+    }
+    else if(status == 'Cancelled'){
+      return errorColor;
+    }
+    return primaryColor;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -80,7 +93,7 @@ class _OrdersListItemState extends State<OrdersListItem> {
                       style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.bold,
-                        color: textGreyColor,
+                        color: getStatusColor(widget.route['Status']),
                       )
                     ),
                   ),
@@ -136,11 +149,13 @@ class _OrdersListItemState extends State<OrdersListItem> {
                   children: [
                     ElevatedButton(
                       onPressed: (){
-                        userDB.updateRouteStatus('Confirmed',
-                            widget.route['DriverId'],
-                            widget.route['PassengerId'],
-                            widget.route['Key']
-                        );
+                        if(widget.route['Status'] == 'Pending'){
+                          userDB.updateRouteStatus('Confirmed',
+                              widget.route['DriverId'],
+                              widget.route['PassengerId'],
+                              widget.route['Key']
+                          );
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: secondaryColor,
@@ -156,11 +171,13 @@ class _OrdersListItemState extends State<OrdersListItem> {
 
                     ElevatedButton(
                       onPressed: (){
-                        userDB.updateRouteStatus('Cancelled',
-                            widget.route['DriverId'],
-                            widget.route['PassengerId'],
-                            widget.route['Key']
-                        );
+                        if(widget.route['Status'] == 'Pending') {
+                          userDB.updateRouteStatus('Cancelled',
+                              widget.route['DriverId'],
+                              widget.route['PassengerId'],
+                              widget.route['Key']
+                          );
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: errorColor,

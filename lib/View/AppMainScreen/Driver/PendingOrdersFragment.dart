@@ -29,7 +29,7 @@ class _PendingOrdersFragmentState extends State<PendingOrdersFragment> {
   }
 
   void checkIfDataExists() async{
-    DataSnapshot snapshot = await userDB.getDriverRoutesDatabaseReference(widget.driverId).get();
+    DataSnapshot snapshot = await userDB.getDriverOrdersDatabaseReference(widget.driverId).get();
     dataExists = snapshot.exists;
   }
 

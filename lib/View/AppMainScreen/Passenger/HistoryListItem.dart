@@ -10,6 +10,19 @@ class HistoryListItem extends StatefulWidget {
 }
 
 class _HistoryListItemState extends State<HistoryListItem> {
+  Color getStatusColor(String status){
+    if(status == 'Pending'){
+      return textGreyColor;
+    }
+    else if(status == 'Confirmed'){
+      return moneyColor;
+    }
+    else if(status == 'Cancelled'){
+      return errorColor;
+    }
+    return primaryColor;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -75,12 +88,13 @@ class _HistoryListItemState extends State<HistoryListItem> {
                   style: TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.bold,
-                    color: textGreyColor,
+                    color: getStatusColor(widget.route['Status']),
                   )
                 ),
               ),
 
               Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Row(
                     children: [
