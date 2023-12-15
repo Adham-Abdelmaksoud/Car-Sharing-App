@@ -20,8 +20,36 @@ class _RoutesAdderScreenState extends State<RoutesAdderScreen> {
 
   RouteDatabase routeDB = RouteDatabase();
 
+  List universityGates = [
+    'Gate 3',
+    'Gate 4',
+  ];
+
   Widget textFieldSeparation(){
     return SizedBox(height: 18,);
+  }
+
+  Widget modalButton(String text, TextEditingController controller){
+    return ElevatedButton(
+      onPressed: (){
+        if(text != 'Other'){
+          controller.text = text;
+        }
+        else{
+          controller.text = '';
+        }
+        Navigator.pop(context);
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: secondaryColor
+      ),
+      child: Text(text,
+        style: TextStyle(
+          fontSize: 16,
+          color: Colors.white,
+        ),
+      ),
+    );
   }
 
   @override
@@ -52,25 +80,91 @@ class _RoutesAdderScreenState extends State<RoutesAdderScreen> {
                         textFieldSeparation(),
 
                         TextFormField(
+                          onTap: (){
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (context) {
+                                return SizedBox(
+                                  height: 100,
+                                  child: Container(
+                                    color: primaryColor,
+                                    child: Center(
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          modalButton('Gate 3', pickupController),
+                                          modalButton('Gate 4', pickupController),
+                                          modalButton('Other', pickupController),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
                           controller: pickupController,
                           validator: (value){
                             if(value == null || value.isEmpty){
                               return 'Pickup cannot be empty!';
                             }
+                            if(value == 'Gate 3' || value == 'Gate 4'){
+                              if(destinationController.text == 'Gate 3' || destinationController.text == 'Gate 4'){
+                                return 'Pickup and Destination cannot be both gates!';
+                              }
+                            }
+                            if(value != 'Gate 3' && value != 'Gate 4'){
+                              if(destinationController.text != 'Gate 3' && destinationController.text != 'Gate 4'){
+                                return 'One of Pickup and Destination must be a gate!';
+                              }
+                            }
                             return null;
                           },
                           decoration: InputDecoration(
-                            label: Text('Pickup')
+                            label: Text('Pickup'),
                           ),
                         ),
 
                         textFieldSeparation(),
 
                         TextFormField(
+                          onTap: (){
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (context) {
+                                return SizedBox(
+                                  height: 100,
+                                  child: Container(
+                                    color: primaryColor,
+                                    child: Center(
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          modalButton('Gate 3', destinationController),
+                                          modalButton('Gate 4', destinationController),
+                                          modalButton('Other', destinationController),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
                           controller: destinationController,
                           validator: (value){
                             if(value == null || value.isEmpty){
                               return 'Destination cannot be empty!';
+                            }
+                            if(value == 'Gate 3' || value == 'Gate 4'){
+                              if(pickupController.text == 'Gate 3' || pickupController.text == 'Gate 4'){
+                                return 'Pickup and Destination cannot be both gates!';
+                              }
+                            }
+                            if(value != 'Gate 3' && value != 'Gate 4'){
+                              if(pickupController.text != 'Gate 3' && pickupController.text != 'Gate 4'){
+                                return 'One of Pickup and Destination must be a gate!';
+                              }
                             }
                             return null;
                           },
@@ -120,10 +214,43 @@ class _RoutesAdderScreenState extends State<RoutesAdderScreen> {
                         textFieldSeparation(),
 
                         TextFormField(
+                          readOnly: true,
                           controller: timeController,
+                          onTap: (){
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (context) {
+                                return SizedBox(
+                                  height: 100,
+                                  child: Container(
+                                    color: primaryColor,
+                                    child: Center(
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          modalButton('7:30 AM', timeController),
+                                          modalButton('5:30 PM', timeController),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
                           validator: (value){
                             if(value == null || value.isEmpty){
-                              return 'Time cannot be empty!';
+                              return 'Trip time should be selected!';
+                            }
+                            if(value == '7:30 AM'){
+                              if(destinationController.text != 'Gate 3' && destinationController.text != 'Gate 4'){
+                                return '7:30 AM trip should be to one of the gates!';
+                              }
+                            }
+                            if(value == '5:30 PM'){
+                              if(pickupController.text != 'Gate 3' && pickupController.text != 'Gate 4'){
+                                return '5:30 PM trip should be from one of the gates!';
+                              }
                             }
                             return null;
                           },

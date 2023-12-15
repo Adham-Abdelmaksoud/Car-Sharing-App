@@ -45,11 +45,24 @@ class _RoutesListItemState extends State<RoutesListItem> {
 
               trailing: Transform.translate(
                 offset: Offset(0, -10),
-                child: Text(widget.route['Time'],
-                    style: TextStyle(
-                        fontSize: 16,
-                        color: textGreyColor
-                    )
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(widget.route['Date'],
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: textGreyColor
+                        )
+                    ),
+                    Text(widget.route['Time'],
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: textGreyColor
+                        )
+                    ),
+                  ],
                 ),
               )
           ),
