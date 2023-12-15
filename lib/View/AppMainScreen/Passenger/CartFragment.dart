@@ -1,12 +1,13 @@
 import 'package:car_sharing_app/resources/colors.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
-import '../../../Model/UserDatabase.dart';
+import '../../../Model/Remote/UserDatabase.dart';
 import 'CartListItem.dart';
 
 class CartFragment extends StatefulWidget {
-  final String userId;
-  const CartFragment({Key? key, required this.userId}) : super(key: key);
+  final String passengerId;
+  const CartFragment({Key? key, required this.passengerId}) : super(key: key);
 
   @override
   State<CartFragment> createState() => _CartFragmentState();
@@ -15,66 +16,93 @@ class CartFragment extends StatefulWidget {
 class _CartFragmentState extends State<CartFragment> {
   UserDatabase userDB = UserDatabase();
 
-  Future<List> getCartList() async{
-    List cartItems = await userDB.getPassengerCartRoutes(widget.userId);
-    return cartItems;
+  bool dataExists = true;
+
+  List getCartRoutesList(DatabaseEvent streamSnapshotData){
+    DataSnapshot databaseSnapshot = streamSnapshotData.snapshot;
+    if(!databaseSnapshot.exists){
+      return [];
+    }
+    Map routesMap = streamSnapshotData.snapshot.value as Map;
+    List routesList = routesMap.values.toList();
+    return routesList;
+  }
+
+  void checkIfDataExists() async{
+    DataSnapshot snapshot = await userDB.getPassengerCartDatabaseReference(widget.passengerId).get();
+    dataExists = snapshot.exists;
+  }
+
+  @override
+  void initState() {
+    checkIfDataExists();
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: getCartList(),
-      builder: (context, snapshot) {
-        if(snapshot.hasData){
-          return Container(
-            decoration: BoxDecoration(
-                color: bluishWhite
-            ),
-            child: Container(
-              decoration: BoxDecoration(
-                  color: Colors.black
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 6),
-                child: ListView.builder(
-                    itemCount: snapshot.data!.length,
+    return Container(
+      color: Colors.black,
+      child: StreamBuilder(
+          stream: userDB.getPassengerCartDatabaseReference(widget.passengerId).onValue,
+          builder: (context, snapshot) {
+            if(snapshot.hasData){
+              List cartRoutes = getCartRoutesList(snapshot.data!);
+              if(cartRoutes.isEmpty){
+                return Center(
+                  child: Text('Cart is Empty!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: primaryColor,
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold
+                    )
+                  )
+                );
+              }
+              else{
+                return Padding(
+                  padding: const EdgeInsets.all(7),
+                  child: ListView.builder(
+                    itemCount: cartRoutes.length,
                     itemBuilder: (context, index){
                       return Card(
                         color: primaryColor,
-                        child: CartListItem(userId: widget.userId, route: snapshot.data![index])
+                        child: CartListItem(passengerId: widget.passengerId, route: cartRoutes[index],)
                       );
                     }
-                ),
-              ),
-            ),
-          );
-        }
-        else if(snapshot.hasError){
-          return Container(
-            color: Colors.black,
-            child: Center(
-              child: Text('Cart is Empty!',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: primaryColor,
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold
-                )
-              )
-            ),
-          );
-        }
-        else{
-          return Container(
-            color: Colors.black,
-            child: Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
-              ),
-            ),
-          );
-        }
-      },
+                  ),
+                );
+              }
+            }
+            else if(snapshot.hasError){
+              return Center(
+                child: Text('Some Error Occurred!'),
+              );
+            }
+            else{
+              if(dataExists){
+                return Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+                  ),
+                );
+              }
+              else{
+                return Center(
+                  child: Text('Cart is Empty!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: primaryColor,
+                        fontSize: 40,
+                        fontWeight: FontWeight.bold
+                    )
+                  )
+                );
+              }
+            }
+          }
+      ),
     );
   }
 }

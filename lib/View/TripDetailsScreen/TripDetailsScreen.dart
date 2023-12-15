@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../Model/UserDatabase.dart';
+import '../../Model/Remote/UserDatabase.dart';
 import '../../resources/colors.dart';
 
 class TripDetailsScreen extends StatefulWidget {

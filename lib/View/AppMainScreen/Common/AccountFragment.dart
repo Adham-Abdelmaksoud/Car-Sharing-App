@@ -1,10 +1,11 @@
-import 'package:car_sharing_app/Model/UserDatabase.dart';
 import 'package:car_sharing_app/View/LoginScreen/LoginScreen.dart';
 import 'package:car_sharing_app/resources/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../Model/UserAuthentication.dart';
+import '../../../Model/Remote/UserAuthentication.dart';
+import '../../../Model/Remote/UserDatabase.dart';
+
 
 class AccountFragment extends StatefulWidget {
   final Map currentUser;

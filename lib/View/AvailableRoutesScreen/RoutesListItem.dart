@@ -1,8 +1,6 @@
-import 'package:car_sharing_app/Model/RouteDatabase.dart';
-import 'package:car_sharing_app/View/TripDetailsScreen/TripDetailsScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../Model/UserDatabase.dart';
+import '../../Model/Remote/UserDatabase.dart';
 import '../../resources/colors.dart';
 
 class RoutesListItem extends StatefulWidget {
@@ -28,7 +26,7 @@ class _RoutesListItemState extends State<RoutesListItem> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      padding: const EdgeInsets.only(left: 14, right: 14, bottom: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
@@ -61,20 +59,29 @@ class _RoutesListItemState extends State<RoutesListItem> {
                 ),
 
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(widget.route['Time'],
+                    Text(widget.route['Date'],
                         style: TextStyle(
                             fontSize: 16,
+                            fontWeight: FontWeight.bold,
                             color: textGreyColor
                         )
                     ),
+                    Text(widget.route['Time'],
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: textGreyColor
+                      )
+                    ),
                     SizedBox(height: 18,),
                     Text('${widget.route['Cost']} EGP',
-                        style: TextStyle(
-                          fontSize: 19,
-                          fontWeight: FontWeight.bold,
-                          color: moneyColor,
-                        )
+                      style: TextStyle(
+                        fontSize: 19,
+                        fontWeight: FontWeight.bold,
+                        color: moneyColor,
+                      )
                     ),
                   ],
                 )

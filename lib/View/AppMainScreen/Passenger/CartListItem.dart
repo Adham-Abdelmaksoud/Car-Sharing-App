@@ -1,12 +1,12 @@
-import 'package:car_sharing_app/Model/UserDatabase.dart';
 import 'package:flutter/material.dart';
+import '../../../Model/Remote/UserDatabase.dart';
 import '../../../resources/colors.dart';
 import '../../TripDetailsScreen/TripDetailsScreen.dart';
 
 class CartListItem extends StatefulWidget {
-  final userId;
+  final passengerId;
   final route;
-  const CartListItem({Key? key, this.userId, this.route}) : super(key: key);
+  const CartListItem({Key? key, this.passengerId, this.route}) : super(key: key);
 
   @override
   State<CartListItem> createState() => _CartListItemState();
@@ -18,7 +18,7 @@ class _CartListItemState extends State<CartListItem> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      padding: const EdgeInsets.only(left: 14, right: 14, bottom: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
@@ -26,7 +26,7 @@ class _CartListItemState extends State<CartListItem> {
             onTap: (){
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => TripDetailsScreen(passengerId: widget.userId, route: widget.route)
+                  builder: (context) => TripDetailsScreen(passengerId: widget.passengerId, route: widget.route)
                 )
               );
             },
@@ -58,20 +58,29 @@ class _CartListItemState extends State<CartListItem> {
                 ),
 
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
+                    Text(widget.route['Date'],
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: textGreyColor
+                      )
+                    ),
                     Text(widget.route['Time'],
-                        style: TextStyle(
-                            fontSize: 16,
-                            color: textGreyColor
-                        )
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: textGreyColor
+                      )
                     ),
                     SizedBox(height: 18,),
                     Text('${widget.route['Cost']} EGP',
-                        style: TextStyle(
-                          fontSize: 19,
-                          fontWeight: FontWeight.bold,
-                          color: moneyColor,
-                        )
+                      style: TextStyle(
+                        fontSize: 19,
+                        fontWeight: FontWeight.bold,
+                        color: moneyColor,
+                      )
                     ),
                   ],
                 )
@@ -85,7 +94,8 @@ class _CartListItemState extends State<CartListItem> {
             child: FloatingActionButton(
               backgroundColor: secondaryColor,
               onPressed: (){
-                userDB.removeRouteFromPassengerHistory(widget.userId, widget.route['Key']);
+                userDB.removeRouteFromPassengerHistory(widget.passengerId, widget.route['Key']);
+                setState(() {});
               },
               child: Icon(Icons.remove,
                 color: Colors.white,

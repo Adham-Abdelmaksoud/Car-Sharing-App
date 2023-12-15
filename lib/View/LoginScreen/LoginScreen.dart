@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../Model/UserAuthentication.dart';
+import '../../Model/Remote/UserAuthentication.dart';
 import '../../resources/colors.dart';
 import '../AppMainScreen/Common/AppMainScreen.dart';
 
@@ -89,192 +89,190 @@ class _LoginScreenState extends State<LoginScreen> {
             hasScrollBody: false,
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 100, horizontal: 45),
-              child: Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CircleAvatar(
-                      minRadius: 75,
-                      maxRadius: 75,
-                      backgroundImage: AssetImage('assets/imgs/user.png',),
-                      backgroundColor: bluishWhite,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    minRadius: 75,
+                    maxRadius: 75,
+                    backgroundImage: AssetImage('assets/imgs/user.png',),
+                    backgroundColor: bluishWhite,
+                  ),
+                  Text('Login',
+                    style: TextStyle(
+                      fontSize: 39,
+                      fontWeight: FontWeight.w500,
                     ),
-                    Text('Login',
-                      style: TextStyle(
-                        fontSize: 39,
-                        fontWeight: FontWeight.w500,
-                      ),
+                  ),
+
+                  SizedBox(height: 10,),
+
+                  Form(
+                    key: loginKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 60,
+                          child: TextFormField(
+                            cursorHeight: 20,
+                            controller: emailController,
+                            validator: (value){
+                              if(value == null || value.isEmpty){
+                                return 'Email is required!';
+                              }
+                              else{
+                                return null;
+                              }
+                            },
+                            decoration: InputDecoration(
+                              hintText: "Email",
+                              hintStyle: TextStyle(
+                                  fontWeight: FontWeight.normal
+                              )
+                            ),
+                            style: TextStyle(
+                              fontSize: 18,
+                              height: 1
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(height: 15,),
+
+                        SizedBox(
+                          height: 60,
+                          child: TextFormField(
+                            cursorHeight: 20,
+                            controller: passwordController,
+                            validator: (value){
+                              if(value == null || value.isEmpty){
+                                return 'Password is required!';
+                              }
+                              else{
+                                return null;
+                              }
+                            },
+                            decoration: InputDecoration(
+                              hintText: "Password",
+                              hintStyle: TextStyle(
+                                fontWeight: FontWeight.normal
+                              )
+                            ),
+                            obscureText: true,
+                            style: TextStyle(
+                              fontSize: 18,
+                              height: 1
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+                  ),
 
-                    SizedBox(height: 10,),
-
-                    Form(
-                      key: loginKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
                         children: [
-                          SizedBox(
-                            height: 60,
-                            child: TextFormField(
-                              cursorHeight: 20,
-                              controller: emailController,
-                              validator: (value){
-                                if(value == null || value.isEmpty){
-                                  return 'Email is required!';
-                                }
-                                else{
-                                  return null;
-                                }
-                              },
-                              decoration: InputDecoration(
-                                hintText: "Email",
-                                hintStyle: TextStyle(
-                                    fontWeight: FontWeight.normal
-                                )
-                              ),
-                              style: TextStyle(
-                                fontSize: 18,
-                                height: 1
+                          Padding(
+                            padding: const EdgeInsets.only(right: 4),
+                            child: SizedBox(
+                              height: 22,
+                              width: 22,
+                              child: Checkbox(
+                                value: rememberMe,
+                                activeColor: secondaryColor,
+                                onChanged: (value){
+                                  setState(() {
+                                    rememberMe = !rememberMe;
+                                  });
+                                },
                               ),
                             ),
                           ),
-
-                          SizedBox(height: 15,),
-
-                          SizedBox(
-                            height: 60,
-                            child: TextFormField(
-                              cursorHeight: 20,
-                              controller: passwordController,
-                              validator: (value){
-                                if(value == null || value.isEmpty){
-                                  return 'Password is required!';
-                                }
-                                else{
-                                  return null;
-                                }
-                              },
-                              decoration: InputDecoration(
-                                hintText: "Password",
-                                hintStyle: TextStyle(
-                                  fontWeight: FontWeight.normal
-                                )
-                              ),
-                              obscureText: true,
-                              style: TextStyle(
-                                fontSize: 18,
-                                height: 1
-                              ),
-                            ),
+                          Text('Remember me',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black54
+                            )
                           ),
                         ],
                       ),
-                    ),
 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(right: 4),
-                              child: SizedBox(
-                                height: 22,
-                                width: 22,
-                                child: Checkbox(
-                                  value: rememberMe,
-                                  activeColor: secondaryColor,
-                                  onChanged: (value){
-                                    setState(() {
-                                      rememberMe = !rememberMe;
-                                    });
-                                  },
-                                ),
-                              ),
+                      TextButton(
+                          onPressed: (){},
+                          child: Text('Forget Password?',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
                             ),
-                            Text('Remember me',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black54
-                              )
-                            ),
-                          ],
-                        ),
-
-                        TextButton(
-                            onPressed: (){},
-                            child: Text('Forget Password?',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                        ),
-                      ],
-                    ),
-
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(1000))),
-                        fixedSize: Size(1000, 42),
-                        backgroundColor: secondaryColor
+                          ),
                       ),
-                      onPressed: (){
-                        if(loginKey.currentState!.validate()){
-                          signIn();
-                        }
-                      },
-                      child: loading? SizedBox(
-                        width: 25,
-                        height: 25,
-                        child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                        ),
-                      ) : Text('Login',
-                        style: TextStyle(
-                          fontSize: 17,
-                          color: Colors.white
-                        ),
-                      ),
-                    ),
+                    ],
+                  ),
 
-                    Text(loginErrorMessage,
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(1000))),
+                      fixedSize: Size(1000, 42),
+                      backgroundColor: secondaryColor
+                    ),
+                    onPressed: (){
+                      if(loginKey.currentState!.validate()){
+                        signIn();
+                      }
+                    },
+                    child: loading? SizedBox(
+                      width: 25,
+                      height: 25,
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    ) : Text('Login',
                       style: TextStyle(
-                        color: errorColor,
-                        fontSize: failedLogin? 14: 0
+                        fontSize: 17,
+                        color: Colors.white
                       ),
                     ),
+                  ),
 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text("Don't have an account yet?",
+                  Text(loginErrorMessage,
+                    style: TextStyle(
+                      color: errorColor,
+                      fontSize: failedLogin? 14: 0
+                    ),
+                  ),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("Don't have an account yet?",
+                        style: TextStyle(
+                            fontSize: 16,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: (){
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => SignupScreen()
+                            )
+                          );
+                        },
+                        child: Text('Signup',
                           style: TextStyle(
                               fontSize: 16,
+                              fontWeight: FontWeight.bold,
                           ),
                         ),
-                        TextButton(
-                          onPressed: (){
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SignupScreen()
-                              )
-                            );
-                          },
-                          child: Text('Signup',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ),

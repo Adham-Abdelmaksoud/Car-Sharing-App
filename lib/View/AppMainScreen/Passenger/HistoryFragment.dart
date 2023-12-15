@@ -1,15 +1,14 @@
-import 'package:car_sharing_app/Model/UserDatabase.dart';
 import 'package:car_sharing_app/resources/colors.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
+import '../../../Model/Remote/UserDatabase.dart';
 import 'HistoryListItem.dart';
 
 
 class HistoryFragment extends StatefulWidget {
-  final userId;
-  const HistoryFragment({Key? key, this.userId}) : super(key: key);
+  final passengerId;
+  const HistoryFragment({Key? key, this.passengerId}) : super(key: key);
 
   @override
   State<HistoryFragment> createState() => _HistoryFragmentState();
@@ -17,6 +16,8 @@ class HistoryFragment extends StatefulWidget {
 
 class _HistoryFragmentState extends State<HistoryFragment> {
   UserDatabase userDB = UserDatabase();
+
+  bool dataExists = true;
 
   List getHistoryRoutesList(DatabaseEvent streamSnapshotData){
     DataSnapshot databaseSnapshot = streamSnapshotData.snapshot;
@@ -28,12 +29,23 @@ class _HistoryFragmentState extends State<HistoryFragment> {
     return routesList;
   }
 
+  void checkIfDataExists() async{
+    DataSnapshot snapshot = await userDB.getPassengerHistoryDatabaseReference(widget.passengerId).get();
+    dataExists = snapshot.exists;
+  }
+
+  @override
+  void initState() {
+    checkIfDataExists();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Colors.black,
       child: StreamBuilder(
-        stream: userDB.getPassengerHistoryDatabaseReference(widget.userId).onValue,
+        stream: userDB.getPassengerHistoryDatabaseReference(widget.passengerId).onValue,
         builder: (context, snapshot) {
           if(snapshot.hasData){
             List historyRoutes = getHistoryRoutesList(snapshot.data!);
@@ -50,14 +62,17 @@ class _HistoryFragmentState extends State<HistoryFragment> {
               );
             }
             else{
-              return ListView.builder(
-                  itemCount: historyRoutes.length,
-                  itemBuilder: (context, index){
-                    return Card(
-                      color: primaryColor,
-                      child: HistoryListItem(route: historyRoutes[index],)
-                    );
-                  }
+              return Padding(
+                padding: const EdgeInsets.all(7),
+                child: ListView.builder(
+                    itemCount: historyRoutes.length,
+                    itemBuilder: (context, index){
+                      return Card(
+                        color: primaryColor,
+                        child: HistoryListItem(route: historyRoutes[index],)
+                      );
+                    }
+                ),
               );
             }
           }
@@ -67,11 +82,25 @@ class _HistoryFragmentState extends State<HistoryFragment> {
             );
           }
           else{
-            return Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
-              ),
-            );
+            if(dataExists){
+              return Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+                ),
+              );
+            }
+            else{
+              return Center(
+                child: Text('Order History is Empty!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: primaryColor,
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold
+                  )
+                )
+              );
+            }
           }
         }
       ),

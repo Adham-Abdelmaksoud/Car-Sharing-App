@@ -1,8 +1,9 @@
-import 'package:car_sharing_app/Model/UserDatabase.dart';
+import 'package:car_sharing_app/Model/Local/UserCacheDatabase.dart';
 import 'package:car_sharing_app/View/AppMainScreen/Driver/PendingOrdersFragment.dart';
 import 'package:car_sharing_app/resources/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../Model/Remote/UserDatabase.dart';
 import '../Passenger/HistoryFragment.dart';
 import '../Passenger/HomeFragment.dart';
 import 'AccountFragment.dart';
@@ -22,18 +23,39 @@ class _AppMainScreenState extends State<AppMainScreen> {
   List? screenFragments;
   List<BottomNavigationBarItem>? bottomNavigationItems;
 
-  UserDatabase db = UserDatabase();
+  UserDatabase userDB = UserDatabase();
+  UserCacheDatabase userCache = UserCacheDatabase();
 
-  Future<List> getCurrentUser() async{
+  Future<String> getUserId() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? userId = prefs.getString('userId');
-    currentUser = await db.getUserInfo(userId!);
+    return userId!;
+  }
+
+  Future<List> getCurrentUser() async{
+    String userId = await getUserId();
+
+    List<Map> cachedUsers = await userCache.getUser(userId);
+    if(cachedUsers.isEmpty){
+      currentUser = await userDB.getUserInfo(userId!);
+      userCache.addUser(
+          userId,
+          currentUser!['Username'],
+          currentUser!['Email'],
+          currentUser!['PhoneNumber'],
+          currentUser!['Role']
+      );
+    }
+    else{
+      currentUser = cachedUsers[0];
+    }
+
     if(currentUser!['Role'] == 'Passenger'){
       setState(() {
         screenFragments = [
           HomeFragment(),
-          CartFragment(userId: userId),
-          HistoryFragment(userId: userId),
+          CartFragment(passengerId: userId),
+          HistoryFragment(passengerId: userId),
           AccountFragment(currentUser: currentUser!,),
         ];
         bottomNavigationItems = [
@@ -59,7 +81,7 @@ class _AppMainScreenState extends State<AppMainScreen> {
     else if(currentUser!['Role'] == 'Driver'){
       setState(() {
         screenFragments = [
-          DriverRoutesFragment(),
+          DriverRoutesFragment(driverId: userId),
           PendingOrdersFragment(driverId: userId,),
           AccountFragment(currentUser: currentUser!,),
         ];
@@ -87,12 +109,12 @@ class _AppMainScreenState extends State<AppMainScreen> {
     prefs.remove('rememberMe');
   }
 
+
   @override
   void initState() {
     getCurrentUser();
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {

@@ -1,13 +1,15 @@
 import 'package:car_sharing_app/View/RouteAdderScreen/RouteAdderScreen.dart';
 import 'package:car_sharing_app/resources/colors.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../Model/UserDatabase.dart';
+import '../../../Model/Remote/UserDatabase.dart';
 import 'RoutesListItem.dart';
 
 class DriverRoutesFragment extends StatefulWidget {
-  const DriverRoutesFragment({Key? key}) : super(key: key);
+  final driverId;
+  const DriverRoutesFragment({Key? key, this.driverId}) : super(key: key);
 
   @override
   State<DriverRoutesFragment> createState() => _DriverRoutesFragmentState();
@@ -16,11 +18,27 @@ class DriverRoutesFragment extends StatefulWidget {
 class _DriverRoutesFragmentState extends State<DriverRoutesFragment> {
   UserDatabase userDB = UserDatabase();
 
-  Future<List> getRoutesList() async{
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? userId = prefs.getString('userId');
-    List routes = await userDB.getDriverRoutes(userId!);
-    return routes;
+  bool dataExists = true;
+
+  List getRoutesList(DatabaseEvent streamSnapshotData){
+    DataSnapshot databaseSnapshot = streamSnapshotData.snapshot;
+    if(!databaseSnapshot.exists){
+      return [];
+    }
+    Map routesMap = streamSnapshotData.snapshot.value as Map;
+    List routesList = routesMap.values.toList();
+    return routesList;
+  }
+
+  void checkIfDataExists() async{
+    DataSnapshot snapshot = await userDB.getDriverRoutesDatabaseReference(widget.driverId).get();
+    dataExists = snapshot.exists;
+  }
+
+  @override
+  void initState() {
+    checkIfDataExists();
+    super.initState();
   }
 
   @override
@@ -43,31 +61,61 @@ class _DriverRoutesFragmentState extends State<DriverRoutesFragment> {
       ),
       body: Container(
         color: Colors.black,
-        child: FutureBuilder(
-          future: getRoutesList(),
+        child: StreamBuilder(
+          stream: userDB.getDriverRoutesDatabaseReference(widget.driverId).onValue,
           builder: (context, snapshot) {
             if(snapshot.hasData){
-              return ListView.builder(
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (context, index){
-                    return Card(
+              List routes = getRoutesList(snapshot.data!);
+              if(routes.isEmpty){
+                return Center(
+                    child: Text('Routes List is Empty!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
                         color: primaryColor,
-                        child: RoutesListItem(
-                          route: snapshot.data![index],
-                        )
-                    );
-                  }
-              );
+                        fontSize: 40,
+                        fontWeight: FontWeight.bold
+                      )
+                    )
+                );
+              }
+              else{
+                return Padding(
+                  padding: const EdgeInsets.all(7),
+                  child: ListView.builder(
+                    itemCount: routes.length,
+                    itemBuilder: (context, index){
+                      return Card(
+                        color: primaryColor,
+                        child: RoutesListItem(route: routes[index])
+                      );
+                    }
+                  ),
+                );
+              }
             }
             else if(snapshot.hasError){
               return Center(child: Text('Some Error Occurred!'));
             }
             else{
-              return Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
-                ),
-              );
+              if(dataExists){
+                return Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+                  ),
+                );
+              }
+              else{
+                return Center(
+                  child: Text('Routes List is Empty!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: primaryColor,
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold
+                    )
+                  )
+                );
+              }
             }
           },
         )

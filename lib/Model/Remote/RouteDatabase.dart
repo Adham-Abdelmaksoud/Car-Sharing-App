@@ -13,7 +13,7 @@ class RouteDatabase{
     return routesList;
   }
 
-  void addNewRoute(String driverId, String pickup, String destination, String time, String cost){
+  void addNewRoute(String driverId, String pickup, String destination, String date, String time, String cost){
     final newRef = getRoutesDatabaseReference().push();
     final key = newRef.key;
     Map route = {
@@ -21,6 +21,7 @@ class RouteDatabase{
       'DriverId': driverId,
       'Pickup': pickup,
       'Destination': destination,
+      'Date': date,
       'Time': time,
       'Cost': cost
     };

@@ -1,4 +1,4 @@
-import 'package:car_sharing_app/Model/RouteDatabase.dart';
+import 'package:car_sharing_app/Model/Remote/RouteDatabase.dart';
 import 'package:car_sharing_app/resources/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,6 +13,7 @@ class RoutesAdderScreen extends StatefulWidget {
 class _RoutesAdderScreenState extends State<RoutesAdderScreen> {
   TextEditingController pickupController = TextEditingController();
   TextEditingController destinationController = TextEditingController();
+  TextEditingController dateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
   TextEditingController costController = TextEditingController();
   GlobalKey<FormState> formKey = GlobalKey();
@@ -81,6 +82,44 @@ class _RoutesAdderScreenState extends State<RoutesAdderScreen> {
                         textFieldSeparation(),
 
                         TextFormField(
+                          readOnly: true,
+                          onTap: () async{
+                            DateTime? selectedDateTime = await showDatePicker(
+                                builder: (context, child) {
+                                  return Theme(
+                                    data: ThemeData(
+                                      colorScheme: ColorScheme.fromSeed(
+                                        seedColor: primaryColor,
+                                        primary: secondaryColor,
+                                      ),
+                                    ),
+                                    child: child ??Text(""),
+                                  );
+                                },
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime(1900),
+                                lastDate: DateTime(2100)
+                            );
+                            if(selectedDateTime != null){
+                              dateController.text = selectedDateTime.toString().split(' ')[0];
+                            }
+                          },
+                          controller: dateController,
+                          validator: (value){
+                            if(value == null || value.isEmpty){
+                              return 'A Date must be selected!';
+                            }
+                            return null;
+                          },
+                          decoration: InputDecoration(
+                              label: Text('Date')
+                          ),
+                        ),
+
+                        textFieldSeparation(),
+
+                        TextFormField(
                           controller: timeController,
                           validator: (value){
                             if(value == null || value.isEmpty){
@@ -122,6 +161,7 @@ class _RoutesAdderScreenState extends State<RoutesAdderScreen> {
                             userId!,
                             pickupController.text,
                             destinationController.text,
+                            dateController.text,
                             timeController.text,
                             costController.text
                           );

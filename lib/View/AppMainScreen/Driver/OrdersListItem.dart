@@ -1,5 +1,5 @@
-import 'package:car_sharing_app/Model/UserDatabase.dart';
 import 'package:flutter/material.dart';
+import '../../../Model/Remote/UserDatabase.dart';
 import '../../../resources/colors.dart';
 
 class OrdersListItem extends StatefulWidget {
@@ -47,11 +47,24 @@ class _OrdersListItemState extends State<OrdersListItem> {
 
               trailing: Transform.translate(
                 offset: Offset(0, -10),
-                child: Text(widget.route['Time'],
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: textGreyColor
-                  )
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(widget.route['Date'],
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: textGreyColor
+                      )
+                    ),
+                    Text(widget.route['Time'],
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: textGreyColor
+                      )
+                    ),
+                  ],
                 ),
               )
           ),
