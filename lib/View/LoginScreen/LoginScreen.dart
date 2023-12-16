@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:car_sharing_app/View/ForgetPasswordScreen/ForgetPasswordScreen.dart';
 import 'package:car_sharing_app/View/SignupScreen/SignupScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -203,7 +204,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
 
                       TextButton(
-                          onPressed: (){},
+                          onPressed: (){
+                            Navigator.of(context).push(
+                              MaterialPageRoute(builder: (context) => ForgetPasswordScreen())
+                            );
+                          },
                           child: Text('Forget Password?',
                             style: TextStyle(
                               fontSize: 15,

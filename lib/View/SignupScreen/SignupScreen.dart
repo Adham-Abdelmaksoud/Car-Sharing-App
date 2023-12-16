@@ -215,7 +215,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             controller: emailController,
                             validator: (value){
                               if(value == null || value.isEmpty){
-                                return 'Email is required';
+                                return 'Email is required!';
                               }
                               else if(!RegExp(r"^[a-zA-Z0-9a-zA-Z0-9]+@eng.asu.edu.eg").hasMatch(emailController.text)){
                                 return 'Email should have the domain eng.asu.edu.eg!';

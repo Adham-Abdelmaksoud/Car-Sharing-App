@@ -44,4 +44,9 @@ class UserAuthenticator{
   Future<void> signOut() async{
     await firebaseAuth.signOut();
   }
+
+  void forgetPassword(String email) async{
+    email = email.trim();
+    await firebaseAuth.sendPasswordResetEmail(email: email);
+  }
 }

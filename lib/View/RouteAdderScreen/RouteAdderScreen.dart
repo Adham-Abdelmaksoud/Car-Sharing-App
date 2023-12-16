@@ -10,6 +10,7 @@ class RoutesAdderScreen extends StatefulWidget {
   State<RoutesAdderScreen> createState() => _RoutesAdderScreenState();
 }
 
+
 class _RoutesAdderScreenState extends State<RoutesAdderScreen> {
   TextEditingController pickupController = TextEditingController();
   TextEditingController destinationController = TextEditingController();
@@ -19,11 +20,6 @@ class _RoutesAdderScreenState extends State<RoutesAdderScreen> {
   GlobalKey<FormState> formKey = GlobalKey();
 
   RouteDatabase routeDB = RouteDatabase();
-
-  List universityGates = [
-    'Gate 3',
-    'Gate 4',
-  ];
 
   Widget textFieldSeparation(){
     return SizedBox(height: 18,);
