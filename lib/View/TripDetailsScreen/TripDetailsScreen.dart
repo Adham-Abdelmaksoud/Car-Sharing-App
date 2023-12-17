@@ -191,23 +191,54 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
 
                                     SizedBox(height: 40,),
 
-                                    SizedBox(
-                                      height: 45,
-                                      width: 1000,
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: secondaryColor,
+                                    Column(
+                                      children: [
+                                        SizedBox(
+                                          height: 45,
+                                          width: 1000,
+                                          child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: secondaryColor,
+                                            ),
+                                            onPressed: (){
+                                              handleConfirmOrder();
+                                            },
+                                            child: Text('Confirm Order',
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.white,
+                                              )
+                                            ),
+                                          ),
                                         ),
-                                        onPressed: (){
-                                          handleConfirmOrder();
-                                        },
-                                        child: Text('Confirm Order',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.white,
-                                          )
+
+                                        SizedBox(height: 13,),
+
+                                        TextButton(
+                                          onPressed: (){
+                                            submitOrder();
+                                            Navigator.pop(context);
+                                          },
+                                          style: ButtonStyle(
+                                            fixedSize: MaterialStatePropertyAll(Size(260, 0)),
+                                            shape: MaterialStateProperty.all(
+                                              RoundedRectangleBorder(
+                                                side: BorderSide(
+                                                  color: darkRedColor,
+                                                  width: 1,
+                                                ),
+                                                borderRadius: BorderRadius.circular(20),
+                                              )
+                                            ),
+                                          ),
+                                          child: Text('Forced Confirm Order',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: darkRedColor,
+                                            )
+                                          ),
                                         ),
-                                      ),
+                                      ],
                                     ),
                                   ],
                                 ),

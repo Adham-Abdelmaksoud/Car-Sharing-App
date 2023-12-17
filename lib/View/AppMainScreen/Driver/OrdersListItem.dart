@@ -20,7 +20,7 @@ class _OrdersListItemState extends State<OrdersListItem> {
     else if(status == 'Confirmed'){
       return moneyColor;
     }
-    else if(status == 'Cancelled'){
+    else if(status == 'Cancelled' || status == 'Expired'){
       return errorColor;
     }
     return primaryColor;
@@ -147,48 +147,110 @@ class _OrdersListItemState extends State<OrdersListItem> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    ElevatedButton(
-                      onPressed: (){
-                        if(widget.route['Status'] == 'Pending'){
-                          userDB.updateRouteStatus('Confirmed',
-                              widget.route['DriverId'],
-                              widget.route['PassengerId'],
-                              widget.route['Key']
-                          );
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: secondaryColor,
-                        fixedSize: Size(150, 45)
-                      ),
-                      child: Text('Confirm',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16
-                        )
-                      ),
+                    Column(
+                      children: [
+                        ElevatedButton(
+                          onPressed: (){
+                            if(widget.route['Status'] == 'Pending'){
+                              userDB.updateRouteStatus('Confirmed',
+                                  widget.route['DriverId'],
+                                  widget.route['PassengerId'],
+                                  widget.route['Key']
+                              );
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: secondaryColor,
+                            fixedSize: Size(150, 45)
+                          ),
+                          child: Text('Confirm',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16
+                            )
+                          ),
+                        ),
+
+                        TextButton(
+                          onPressed: (){
+                            userDB.updateRouteStatus('Confirmed',
+                                widget.route['DriverId'],
+                                widget.route['PassengerId'],
+                                widget.route['Key']
+                            );
+                          },
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(
+                                  side: BorderSide(
+                                    color: secondaryColor,
+                                    width: 1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(20),
+                                )
+                            ),
+                          ),
+                          child: Text('Forced Confirm',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: secondaryColor,
+                              )
+                          ),
+                        ),
+                      ],
                     ),
 
-                    ElevatedButton(
-                      onPressed: (){
-                        if(widget.route['Status'] == 'Pending') {
-                          userDB.updateRouteStatus('Cancelled',
-                              widget.route['DriverId'],
-                              widget.route['PassengerId'],
-                              widget.route['Key']
-                          );
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: errorColor,
-                        fixedSize: Size(150, 45)
-                      ),
-                      child: Text('Cancel',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16
-                        )
-                      ),
+                    Column(
+                      children: [
+                        ElevatedButton(
+                          onPressed: (){
+                            if(widget.route['Status'] == 'Pending') {
+                              userDB.updateRouteStatus('Cancelled',
+                                  widget.route['DriverId'],
+                                  widget.route['PassengerId'],
+                                  widget.route['Key']
+                              );
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: errorColor,
+                            fixedSize: Size(150, 45)
+                          ),
+                          child: Text('Cancel',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16
+                            )
+                          ),
+                        ),
+
+                        TextButton(
+                          onPressed: (){
+                            userDB.updateRouteStatus('Cancelled',
+                                widget.route['DriverId'],
+                                widget.route['PassengerId'],
+                                widget.route['Key']
+                            );
+                          },
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(
+                                  side: BorderSide(
+                                    color: errorColor,
+                                    width: 1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(20),
+                                )
+                            ),
+                          ),
+                          child: Text('Forced Cancel',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: errorColor,
+                              )
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

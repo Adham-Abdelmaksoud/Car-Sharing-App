@@ -17,7 +17,7 @@ class _HistoryListItemState extends State<HistoryListItem> {
     else if(status == 'Confirmed'){
       return moneyColor;
     }
-    else if(status == 'Cancelled'){
+    else if(status == 'Cancelled' || status == 'Expired'){
       return errorColor;
     }
     return primaryColor;

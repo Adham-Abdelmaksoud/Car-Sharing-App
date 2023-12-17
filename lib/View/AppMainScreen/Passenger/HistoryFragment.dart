@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 import '../../../Model/Remote/UserDatabase.dart';
+import '../../../resources/util.dart';
 import 'HistoryListItem.dart';
 
 
@@ -34,6 +35,34 @@ class _HistoryFragmentState extends State<HistoryFragment> {
     dataExists = snapshot.exists;
   }
 
+  bool checkIfExpired(Map route){
+    List<String> tripDate = route['Date'].split('-');
+    String tripTime = route['Time'];
+    String referenceDate = '';
+    String referenceTime = '';
+    if(tripTime == '7:30 AM'){
+      referenceTime = '11:30 PM';
+      referenceDate = DateTime(
+          int.parse(tripDate[0]),
+          int.parse(tripDate[1]),
+          int.parse(tripDate[2])-1
+      ).toString().split(' ')[0];
+    }
+    else if(tripTime == '5:30 PM'){
+      referenceTime = '04:30 PM';
+      referenceDate = tripDate.join('-');
+    }
+    if(compareWithCurrentDate(referenceDate) > 0){
+      return false;
+    }
+    else if(compareWithCurrentDate(referenceDate) == 0){
+      if(compareWithCurrentTime(referenceTime)){
+        return false;
+      }
+    }
+    return true;
+  }
+
   @override
   void initState() {
     checkIfDataExists();
@@ -49,6 +78,17 @@ class _HistoryFragmentState extends State<HistoryFragment> {
         builder: (context, snapshot) {
           if(snapshot.hasData){
             List historyRoutes = getHistoryRoutesList(snapshot.data!);
+            for(int i=0 ; i<historyRoutes.length ; i++){
+              if(historyRoutes[i]['Status'] == 'Pending'){
+                if(checkIfExpired(historyRoutes[i])){
+                  userDB.updateRouteStatus('Expired',
+                      historyRoutes[i]['DriverId'],
+                      historyRoutes[i]['PassengerId'],
+                      historyRoutes[i]['Key']
+                  );
+                }
+              }
+            }
             if(historyRoutes.isEmpty){
               return Center(
                 child: Text('Order History is Empty!',

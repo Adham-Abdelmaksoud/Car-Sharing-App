@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../../Model/Remote/UserDatabase.dart';
 import '../../../resources/colors.dart';
+import '../../../resources/util.dart';
 
 class PendingOrdersFragment extends StatefulWidget {
   final driverId;
@@ -33,6 +34,34 @@ class _PendingOrdersFragmentState extends State<PendingOrdersFragment> {
     dataExists = snapshot.exists;
   }
 
+  bool checkIfExpired(Map route){
+    List<String> tripDate = route['Date'].split('-');
+    String tripTime = route['Time'];
+    String referenceDate = '';
+    String referenceTime = '';
+    if(tripTime == '7:30 AM'){
+      referenceTime = '11:30 PM';
+      referenceDate = DateTime(
+          int.parse(tripDate[0]),
+          int.parse(tripDate[1]),
+          int.parse(tripDate[2])-1
+      ).toString().split(' ')[0];
+    }
+    else if(tripTime == '5:30 PM'){
+      referenceTime = '04:30 PM';
+      referenceDate = tripDate.join('-');
+    }
+    if(compareWithCurrentDate(referenceDate) > 0){
+      return false;
+    }
+    else if(compareWithCurrentDate(referenceDate) == 0){
+      if(compareWithCurrentTime(referenceTime)){
+        return false;
+      }
+    }
+    return true;
+  }
+
   @override
   void initState() {
     checkIfDataExists();
@@ -49,6 +78,17 @@ class _PendingOrdersFragmentState extends State<PendingOrdersFragment> {
             builder: (context, snapshot) {
               if(snapshot.hasData){
                 List ordersList = getOrdersList(snapshot.data!);
+                for(int i=0 ; i<ordersList.length ; i++){
+                  if(ordersList[i]['Status'] == 'Pending'){
+                    if(checkIfExpired(ordersList[i])){
+                      userDB.updateRouteStatus('Expired',
+                          ordersList[i]['DriverId'],
+                          ordersList[i]['PassengerId'],
+                          ordersList[i]['Key']
+                      );
+                    }
+                  }
+                }
                 if(ordersList.isEmpty){
                   return Center(
                     child: Text('No Pending Orders!',
