@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Model/Remote/UserAuthentication.dart';
 import '../../resources/colors.dart';
+import '../../resources/widgets.dart';
 import '../AppMainScreen/Common/AppMainScreen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -114,60 +115,34 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(
-                          height: 60,
-                          child: TextFormField(
-                            cursorHeight: 20,
-                            controller: emailController,
-                            validator: (value){
-                              if(value == null || value.isEmpty){
-                                return 'Email is required!';
-                              }
-                              else{
-                                return null;
-                              }
-                            },
-                            decoration: InputDecoration(
-                              hintText: "Email",
-                              hintStyle: TextStyle(
-                                  fontWeight: FontWeight.normal
-                              )
-                            ),
-                            style: TextStyle(
-                              fontSize: 18,
-                              height: 1
-                            ),
-                          ),
+                        LoginSignupTextField(
+                          hintText: "Email",
+                          controller: emailController,
+                          validator: (value){
+                            if(value == null || value.isEmpty){
+                              return 'Email is required!';
+                            }
+                            else{
+                              return null;
+                            }
+                          },
                         ),
 
                         SizedBox(height: 15,),
 
-                        SizedBox(
-                          height: 60,
-                          child: TextFormField(
-                            cursorHeight: 20,
-                            controller: passwordController,
-                            validator: (value){
-                              if(value == null || value.isEmpty){
-                                return 'Password is required!';
-                              }
-                              else{
-                                return null;
-                              }
-                            },
-                            decoration: InputDecoration(
-                              hintText: "Password",
-                              hintStyle: TextStyle(
-                                fontWeight: FontWeight.normal
-                              )
-                            ),
-                            obscureText: true,
-                            style: TextStyle(
-                              fontSize: 18,
-                              height: 1
-                            ),
-                          ),
-                        ),
+                        LoginSignupTextField(
+                          hintText: "Password",
+                          obscureText: true,
+                          controller: passwordController,
+                          validator: (value){
+                            if(value == null || value.isEmpty){
+                              return 'Password is required!';
+                            }
+                            else{
+                              return null;
+                            }
+                          },
+                        )
                       ],
                     ),
                   ),
@@ -263,9 +238,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         onPressed: (){
                           Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(
-                                builder: (context) => SignupScreen()
-                            )
+                            MaterialPageRoute(builder: (context) => SignupScreen())
                           );
                         },
                         child: Text('Signup',

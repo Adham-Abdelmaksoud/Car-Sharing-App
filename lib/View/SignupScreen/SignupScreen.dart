@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:car_sharing_app/Model/Local/UserCacheDatabase.dart';
 import 'package:car_sharing_app/View/LoginScreen/LoginScreen.dart';
+import 'package:car_sharing_app/resources/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -123,31 +124,18 @@ class _SignupScreenState extends State<SignupScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Expanded(
-                              child: SizedBox(
-                                height: 60,
-                                child: TextFormField(
-                                  cursorHeight: 20,
-                                  controller: usernameController,
-                                  validator: (value){
-                                    if(value == null || value.isEmpty){
-                                      return 'Username is required';
-                                    }
-                                    else{
-                                      return null;
-                                    }
-                                  },
-                                  decoration: InputDecoration(
-                                    hintText: "Username",
-                                    hintStyle: TextStyle(
-                                        fontWeight: FontWeight.normal
-                                    )
-                                  ),
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    height: 1
-                                  ),
-                                ),
-                              ),
+                              child: LoginSignupTextField(
+                                hintText: "Username",
+                                controller: usernameController,
+                                validator: (value){
+                                  if(value == null || value.isEmpty){
+                                    return 'Username is required!';
+                                  }
+                                  else{
+                                    return null;
+                                  }
+                                },
+                              )
                             ),
 
                             SizedBox(width: 10,),
@@ -176,130 +164,77 @@ class _SignupScreenState extends State<SignupScreen> {
 
                         SizedBox(height: 10,),
 
-                        SizedBox(
-                          height: 60,
-                          child: TextFormField(
-                            keyboardType: TextInputType.number,
-                            cursorHeight: 20,
-                            controller: phoneNumberController,
-                            validator: (value){
-                              if(value == null || value.isEmpty){
-                                return 'Phone Number is required!';
-                              }
-                              else if(phoneNumberController.text.length != 11){
-                                return 'Invalid Phone Number!';
-                              }
-                              else{
-                                return null;
-                              }
-                            },
-                            decoration: InputDecoration(
-                                hintText: "Phone Number",
-                                hintStyle: TextStyle(
-                                    fontWeight: FontWeight.normal
-                                )
-                            ),
-                            style: TextStyle(
-                                fontSize: 18,
-                                height: 1
-                            ),
-                          ),
+                        LoginSignupTextField(
+                          hintText: "Phone Number",
+                          controller: phoneNumberController,
+                          validator: (value){
+                            if(value == null || value.isEmpty){
+                              return 'Phone Number is required!';
+                            }
+                            else if(phoneNumberController.text.length != 11){
+                              return 'Invalid Phone Number!';
+                            }
+                            else{
+                              return null;
+                            }
+                          },
                         ),
 
                         SizedBox(height: 10,),
 
-                        SizedBox(
-                          height: 60,
-                          child: TextFormField(
-                            cursorHeight: 20,
-                            controller: emailController,
-                            validator: (value){
-                              if(value == null || value.isEmpty){
-                                return 'Email is required!';
-                              }
-                              else if(!RegExp(r"^[a-zA-Z0-9a-zA-Z0-9]+@eng.asu.edu.eg").hasMatch(emailController.text)){
-                                return 'Email should have the domain eng.asu.edu.eg!';
-                              }
-                              else{
-                                return null;
-                              }
-                            },
-                            decoration: InputDecoration(
-                              hintText: "Email",
-                              hintStyle: TextStyle(
-                                  fontWeight: FontWeight.normal
-                              )
-                            ),
-                            style: TextStyle(
-                              fontSize: 18,
-                              height: 1
-                            ),
-                          ),
+                        LoginSignupTextField(
+                          hintText: "Email",
+                          controller: emailController,
+                          validator: (value){
+                            if(value == null || value.isEmpty){
+                              return 'Email is required!';
+                            }
+                            else if(!RegExp(r"^[a-zA-Z0-9a-zA-Z0-9]+@eng.asu.edu.eg").hasMatch(emailController.text)){
+                              return 'Email should have the domain eng.asu.edu.eg!';
+                            }
+                            else{
+                              return null;
+                            }
+                          },
                         ),
 
                         SizedBox(height: 10,),
 
-                        SizedBox(
-                          height: 60,
-                          child: TextFormField(
-                            cursorHeight: 20,
-                            controller: passwordController,
-                            validator: (value){
-                              if(value == null || value.isEmpty){
-                                return 'Password is required!';
-                              }
-                              else if(passwordController.text.length < 5){
-                                return 'Password length must be above 5 characters';
-                              }
-                              else{
-                                return null;
-                              }
-                            },
-                            decoration: InputDecoration(
-                              hintText: "Password",
-                              hintStyle: TextStyle(
-                                  fontWeight: FontWeight.normal
-                              )
-                            ),
-                            obscureText: true,
-                            style: TextStyle(
-                              fontSize: 18,
-                              height: 1
-                            ),
-                          ),
+                        LoginSignupTextField(
+                          hintText: "Password",
+                          obscureText: true,
+                          controller: passwordController,
+                          validator: (value){
+                            if(value == null || value.isEmpty){
+                              return 'Password is required!';
+                            }
+                            else if(passwordController.text.length < 5){
+                              return 'Password length must be above 5 characters';
+                            }
+                            else{
+                              return null;
+                            }
+                          },
                         ),
 
                         SizedBox(height: 10,),
 
-                        SizedBox(
-                          height: 60,
-                          child: TextFormField(
-                            cursorHeight: 20,
-                            controller: confirmPasswordController,
-                            validator: (value){
-                              if(value == null || value.isEmpty){
-                                return 'Confirm Password is required!';
-                              }
-                              else if(confirmPasswordController.text != passwordController.text){
-                                return 'Passwords are not matching!';
-                              }
-                              else{
-                                return null;
-                              }
-                            },
-                            decoration: InputDecoration(
-                              hintText: "Confirm Password",
-                              hintStyle: TextStyle(
-                                fontWeight: FontWeight.normal
-                              )
-                            ),
-                            obscureText: true,
-                            style: TextStyle(
-                              fontSize: 18,
-                              height: 1
-                            ),
-                          ),
-                        ),
+                        LoginSignupTextField(
+                          hintText: "Confirm Password",
+                          obscureText: true,
+                          controller: confirmPasswordController,
+                          validator: (value){
+                            if(value == null || value.isEmpty){
+                              return 'Confirm Password is required!';
+                            }
+                            else if(confirmPasswordController.text != passwordController.text){
+                              return 'Passwords are not matching!';
+                            }
+                            else{
+                              return null;
+                            }
+                          },
+                        )
                       ],
                     ),
                   ),
@@ -351,9 +286,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       TextButton(
                         onPressed: (){
                           Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(
-                              builder: (context) => LoginScreen()
-                            )
+                            MaterialPageRoute(builder: (context) => LoginScreen())
                           );
                         },
                         child: Text('Login',

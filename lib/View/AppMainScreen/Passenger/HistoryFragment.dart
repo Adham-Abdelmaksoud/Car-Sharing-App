@@ -65,13 +65,13 @@ class _HistoryFragmentState extends State<HistoryFragment> {
               return Padding(
                 padding: const EdgeInsets.all(7),
                 child: ListView.builder(
-                    itemCount: historyRoutes.length,
-                    itemBuilder: (context, index){
-                      return Card(
-                        color: primaryColor,
-                        child: HistoryListItem(route: historyRoutes[index],)
-                      );
-                    }
+                  itemCount: historyRoutes.length,
+                  itemBuilder: (context, index){
+                    return Card(
+                      color: primaryColor,
+                      child: HistoryListItem(route: historyRoutes[index],)
+                    );
+                  }
                 ),
               );
             }

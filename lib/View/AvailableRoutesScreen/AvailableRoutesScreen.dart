@@ -1,4 +1,5 @@
 import 'package:car_sharing_app/Model/Remote/RouteDatabase.dart';
+import 'package:car_sharing_app/resources/widgets.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import '../../resources/colors.dart';
@@ -51,36 +52,24 @@ class _AvailableRoutesScreenState extends State<AvailableRoutesScreen> {
       ),
       body: Column(
         children: [
-          TextField(
-            cursorColor: secondaryColor,
+          AvailableRoutesSearchbar(
+            hintText: "Pickup Location",
+            icon: Icon(Icons.location_on_outlined),
             onChanged: (value){
               setState(() {
                 pickupFilter = value;
               });
             },
-            decoration: InputDecoration(
-              hintText: 'Pickup Location',
-              prefixIcon: Icon(Icons.location_on_outlined),
-              focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                      color: secondaryColor
-                  )
-              ),
-              iconColor: secondaryColor
-            ),
           ),
 
-          TextField(
-            cursorColor: secondaryColor,
+          AvailableRoutesSearchbar(
+            hintText: "Destination",
+            icon: Icon(Icons.location_on),
             onChanged: (value){
               setState(() {
                 destinationFilter = value;
               });
             },
-            decoration: InputDecoration(
-              hintText: 'Destination',
-              prefixIcon: Icon(Icons.location_on),
-            ),
           ),
 
           Expanded(

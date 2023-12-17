@@ -1,3 +1,4 @@
+import 'package:car_sharing_app/resources/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Model/Remote/UserDatabase.dart';
@@ -99,17 +100,7 @@ class _RoutesListItemState extends State<RoutesListItem> {
                 setState(() {
                   addToCartMessage = statusCode? "Trip added to Cart": "Trip already added";
                 });
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    duration: Duration(milliseconds: 750),
-                    backgroundColor: secondaryColor,
-                    content: Text(addToCartMessage,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold
-                      ),
-                    ),
-                  )
-                );
+                ShowSnackBar(context, addToCartMessage, 750, secondaryColor);
               },
               child: Icon(Icons.add,
                 color: Colors.white,
