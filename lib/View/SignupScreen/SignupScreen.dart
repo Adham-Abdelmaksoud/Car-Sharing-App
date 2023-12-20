@@ -189,7 +189,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             if(value == null || value.isEmpty){
                               return 'Email is required!';
                             }
-                            else if(!RegExp(r"^[a-zA-Z0-9a-zA-Z0-9]+@eng.asu.edu.eg").hasMatch(emailController.text)){
+                            else if(!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@eng.asu.edu.eg").hasMatch(emailController.text)){
                               return 'Email should have the domain eng.asu.edu.eg!';
                             }
                             else{

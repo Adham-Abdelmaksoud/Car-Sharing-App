@@ -22,32 +22,46 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
 
   UserDatabase userDB = UserDatabase();
 
-  void submitOrder(){
-    widget.route['Cost'] = totalPrice;
-    widget.route['Seats'] = numberOfSeats;
-    widget.route['Payment'] = paymentType;
-    widget.route['Status'] = 'Pending';
-    widget.route['PassengerId'] = widget.passengerId;
-    userDB.submitOrder(widget.route);
-  }
-
-  void handleConfirmOrder(){
-    List<String> tripDate = widget.route['Date'].split('-');
-    String tripTime = widget.route['Time'];
+  String getReferenceDate(String date, String time){
+    List<String> tripDate = date.split('-');
     String referenceDate = '';
-    String referenceTime = '';
-    if(tripTime == '7:30 AM'){
-      referenceTime = '10:00 PM';
+    if(time == '7:30 AM'){
       referenceDate = DateTime(
           int.parse(tripDate[0]),
           int.parse(tripDate[1]),
           int.parse(tripDate[2])-1
       ).toString().split(' ')[0];
     }
-    else if(tripTime == '5:30 PM'){
-      referenceTime = '01:00 PM';
+    else if(time == '5:30 PM'){
       referenceDate = tripDate.join('-');
     }
+    return referenceDate;
+  }
+
+  String getReferenceTime(String time){
+    String referenceTime = '';
+    if(time == '7:30 AM'){
+      referenceTime = '10:00 PM';
+    }
+    else if(time == '5:30 PM'){
+      referenceTime = '01:00 PM';
+    }
+    return referenceTime;
+  }
+
+  void submitOrder(){
+    widget.route['Cost'] = totalPrice;
+    widget.route['Seats'] = numberOfSeats;
+    widget.route['Payment'] = paymentType;
+    widget.route['Status'] = 'Pending';
+    widget.route['PassengerId'] = widget.passengerId;
+    widget.route['OrderDateTime'] = DateTime.now().toString();
+    userDB.submitOrder(widget.route);
+  }
+
+  void handleConfirmOrder(){
+    String referenceDate = getReferenceDate(widget.route['Date'], widget.route['Time']);
+    String referenceTime = getReferenceTime(widget.route['Time']);
     if(compareWithCurrentDate(referenceDate) > 0){
       submitOrder();
       Navigator.pop(context);
@@ -111,7 +125,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          DriverDetails(snapshot.data!['Username']),
+                                          DriverDetails(snapshot.data!['Username'], snapshot.data!['PhoneNumber']),
 
                                           DetailsDivider(),
 

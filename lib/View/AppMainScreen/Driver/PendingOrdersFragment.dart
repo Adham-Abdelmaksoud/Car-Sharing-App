@@ -78,6 +78,7 @@ class _PendingOrdersFragmentState extends State<PendingOrdersFragment> {
             builder: (context, snapshot) {
               if(snapshot.hasData){
                 List ordersList = getOrdersList(snapshot.data!);
+                ordersList.sort((a, b) => b['OrderDateTime'].compareTo(a['OrderDateTime']));
                 for(int i=0 ; i<ordersList.length ; i++){
                   if(ordersList[i]['Status'] == 'Pending'){
                     if(checkIfExpired(ordersList[i])){

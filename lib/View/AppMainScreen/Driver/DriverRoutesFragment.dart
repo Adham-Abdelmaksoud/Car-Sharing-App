@@ -66,6 +66,8 @@ class _DriverRoutesFragmentState extends State<DriverRoutesFragment> {
           builder: (context, snapshot) {
             if(snapshot.hasData){
               List routes = getRoutesList(snapshot.data!);
+              routes.sort((a, b) => a['Time'].compareTo(b['Time']));
+              routes.sort((a, b) => a['Date'].compareTo(b['Date']));
               if(routes.isEmpty){
                 return Center(
                     child: Text('Routes List is Empty!',

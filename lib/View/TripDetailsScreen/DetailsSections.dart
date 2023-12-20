@@ -24,7 +24,7 @@ Widget DetailsDivider(){
   );
 }
 
-Widget DriverDetails(String driverName){
+Widget DriverDetails(String driverName, String phoneNumber){
   return Row(
     children: [
       Image.asset('assets/imgs/user.png',
@@ -40,11 +40,11 @@ Widget DriverDetails(String driverName){
               fontWeight: FontWeight.bold
             ),
           ),
-          // Text('Hyundai Verna',
-          //   style: TextStyle(
-          //     fontSize: 17,
-          //   ),
-          // ),
+          Text(phoneNumber,
+            style: TextStyle(
+              fontSize: 17,
+            ),
+          ),
         ],
       ),
     ]

@@ -48,6 +48,8 @@ class _CartFragmentState extends State<CartFragment> {
           builder: (context, snapshot) {
             if(snapshot.hasData){
               List cartRoutes = getCartRoutesList(snapshot.data!);
+              cartRoutes.sort((a, b) => a['Time'].compareTo(b['Time']));
+              cartRoutes.sort((a, b) => a['Date'].compareTo(b['Date']));
               if(cartRoutes.isEmpty){
                 return Center(
                   child: Text('Cart is Empty!',

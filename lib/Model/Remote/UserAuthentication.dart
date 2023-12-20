@@ -12,7 +12,7 @@ class UserAuthenticator{
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   
   Future<User?> signInWithEmailAndPassword(String email, String password) async{
-    email = email.toLowerCase().trim();
+    email = email.trim().toLowerCase();
     try{
       UserCredential credential = await firebaseAuth.signInWithEmailAndPassword(
           email: email,
@@ -27,7 +27,7 @@ class UserAuthenticator{
   }
 
   Future<User?> signUpWithEmailAndPassword(String email, String password) async{
-    email = email.toLowerCase().trim();
+    email = email.trim().toLowerCase();
     try{
       UserCredential credential = await firebaseAuth.createUserWithEmailAndPassword(
           email: email,
@@ -46,7 +46,7 @@ class UserAuthenticator{
   }
 
   void forgetPassword(String email) async{
-    email = email.trim();
+    email = email.trim().toLowerCase();
     await firebaseAuth.sendPasswordResetEmail(email: email);
   }
 }

@@ -78,6 +78,7 @@ class _HistoryFragmentState extends State<HistoryFragment> {
         builder: (context, snapshot) {
           if(snapshot.hasData){
             List historyRoutes = getHistoryRoutesList(snapshot.data!);
+            historyRoutes.sort((a, b) => b['OrderDateTime'].compareTo(a['OrderDateTime']));
             for(int i=0 ; i<historyRoutes.length ; i++){
               if(historyRoutes[i]['Status'] == 'Pending'){
                 if(checkIfExpired(historyRoutes[i])){

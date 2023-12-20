@@ -35,6 +35,10 @@ class _AvailableRoutesScreenState extends State<AvailableRoutesScreen> {
   }
 
   List getFilteredRoutesList(DatabaseEvent streamSnapshotData){
+    DataSnapshot databaseSnapshot = streamSnapshotData.snapshot;
+    if(!databaseSnapshot.exists){
+      return [];
+    }
     Map routesMap = streamSnapshotData.snapshot.value as Map;
     List routesList = routesMap.values.toList();
     List filteredRoutes = filterRoutes(routesList, pickupFilter, destinationFilter);
@@ -84,20 +88,36 @@ class _AvailableRoutesScreenState extends State<AvailableRoutesScreen> {
                   builder: (context, snapshot) {
                     if(snapshot.hasData){
                       List filteredRoutes = getFilteredRoutesList(snapshot.data!);
-                      return ListView.builder(
-                        itemCount: filteredRoutes.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 1),
-                            child: Card(
-                              color: primaryColor,
-                              child: RoutesListItem(
-                                route: filteredRoutes[index],
+                      filteredRoutes.sort((a, b) => a['Time'].compareTo(b['Time']));
+                      filteredRoutes.sort((a, b) => a['Date'].compareTo(b['Date']));
+                      if(filteredRoutes.isEmpty){
+                        return Center(
+                          child: Text('No Available Routes!',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: primaryColor,
+                                fontSize: 40,
+                                fontWeight: FontWeight.bold
+                            )
+                          )
+                        );
+                      }
+                      else{
+                        return ListView.builder(
+                          itemCount: filteredRoutes.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 1),
+                              child: Card(
+                                color: primaryColor,
+                                child: RoutesListItem(
+                                  route: filteredRoutes[index],
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      );
+                            );
+                          },
+                        );
+                      }
                     }
                     else if(snapshot.hasError){
                       return Center(child: Text('Some Error Occurred!'));

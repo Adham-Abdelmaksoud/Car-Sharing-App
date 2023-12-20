@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:car_sharing_app/Model/Remote/UserDatabase.dart';
 import 'package:car_sharing_app/View/ForgetPasswordScreen/ForgetPasswordScreen.dart';
 import 'package:car_sharing_app/View/SignupScreen/SignupScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,19 +24,28 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController passwordController = TextEditingController();
   GlobalKey<FormState> loginKey = GlobalKey();
 
+  List userRoles = [
+    'Passenger',
+    'Driver'
+  ];
+  String roleValue = 'Passenger';
   bool rememberMe = false;
   bool loading = false;
   bool failedLogin = false;
   String loginErrorMessage = '';
 
   UserAuthenticator userAuth = UserAuthenticator();
+  UserDatabase userDB = UserDatabase();
 
   void navigateToMainScreen(){
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-          builder: (context) => AppMainScreen()
-      ),
+      MaterialPageRoute(builder: (context) => AppMainScreen()),
     );
+  }
+
+  Future<String> checkRole(String userId) async{
+    Map userInfo = await userDB.getUserInfo(userId);
+    return userInfo['Role'];
   }
 
   void signIn() async{
@@ -48,10 +58,20 @@ class _LoginScreenState extends State<LoginScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     if(user != null){
-      navigateToMainScreen();
-      prefs.setString('userId', user!.uid);
-      if(rememberMe){
-        prefs.setBool('rememberMe', true);
+      String userRole = await checkRole(user!.uid);
+      if(userRole == roleValue){
+        navigateToMainScreen();
+        prefs.setString('userId', user!.uid);
+        if(rememberMe){
+          prefs.setBool('rememberMe', true);
+        }
+      }
+      else{
+        setState(() {
+          failedLogin = true;
+          loading = false;
+          loginErrorMessage = 'This account is registered as $userRole not $roleValue';
+        });
       }
     }
     else if(authenticateTestCredentials(email, password)){
@@ -115,6 +135,47 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(top: 3),
+                              child: Text('Login as:',
+                                style: TextStyle(
+                                  color: secondaryColor,
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.bold
+                                ),
+                              ),
+                            ),
+
+                            SizedBox(width: 14,),
+
+                            Expanded(
+                              child: DropdownButtonFormField(
+                                dropdownColor: primaryColor,
+                                value: roleValue,
+                                items: userRoles.map((value){
+                                  return DropdownMenuItem(
+                                    value: value,
+                                    child: Text(value,
+                                      style: TextStyle(
+                                        fontSize: 17
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                                onChanged: (value){
+                                  setState(() {
+                                    roleValue = value.toString();
+                                  });
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        SizedBox(height: 28,),
+
                         LoginSignupTextField(
                           hintText: "Email",
                           controller: emailController,
@@ -219,7 +280,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
 
+                  SizedBox(height: 5,),
+
                   Text(loginErrorMessage,
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                       color: errorColor,
                       fontSize: failedLogin? 14: 0
@@ -236,15 +300,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       TextButton(
                         onPressed: (){
-                          Navigator.pushReplacement(
-                            context,
+                          Navigator.of(context).pushReplacement(
                             MaterialPageRoute(builder: (context) => SignupScreen())
                           );
                         },
                         child: Text('Signup',
                           style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
