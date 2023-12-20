@@ -94,7 +94,7 @@ class _CartListItemState extends State<CartListItem> {
             child: FloatingActionButton(
               backgroundColor: secondaryColor,
               onPressed: (){
-                userDB.removeRouteFromPassengerHistory(widget.passengerId, widget.route['Key']);
+                userDB.removeRouteFromPassengerCart(widget.passengerId, widget.route['Key']);
                 setState(() {});
               },
               child: Icon(Icons.remove,

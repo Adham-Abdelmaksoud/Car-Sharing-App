@@ -1,4 +1,3 @@
-import 'package:car_sharing_app/View/TripDetailsScreen/TripDetailsScreen.dart';
 import 'package:flutter/material.dart';
 import '../../../resources/colors.dart';
 

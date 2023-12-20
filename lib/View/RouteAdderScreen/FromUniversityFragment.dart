@@ -1,8 +1,10 @@
+import 'package:car_sharing_app/resources/TimeHelper.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Model/Remote/RouteDatabase.dart';
 import '../../resources/colors.dart';
+import '../../resources/widgets.dart';
 
 class FromUniversityFragment extends StatefulWidget {
   const FromUniversityFragment({Key? key}) : super(key: key);
@@ -14,7 +16,7 @@ class FromUniversityFragment extends StatefulWidget {
 class _FromUniversityFragmentState extends State<FromUniversityFragment> {
   TextEditingController destinationController = TextEditingController();
   TextEditingController dateController = TextEditingController();
-  TextEditingController timeController = TextEditingController(text: '5:30 PM');
+  TextEditingController timeController = TextEditingController(text: '05:30 PM');
   TextEditingController costController = TextEditingController();
   GlobalKey<FormState> formKey = GlobalKey();
 
@@ -25,6 +27,44 @@ class _FromUniversityFragmentState extends State<FromUniversityFragment> {
     'Gate 3',
     'Gate 4'
   ];
+  bool failedAdding = false;
+  String errorMessage = '';
+
+
+  void addTrip() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userId = prefs.getString('userId');
+    routeDB.addNewRoute(
+        userId!,
+        pickupItem,
+        destinationController.text,
+        dateController.text,
+        timeController.text,
+        costController.text
+    );
+    Navigator.pop(context);
+  }
+
+
+  void handleAddingNewRoute() async{
+    String referenceDate = getRouteAddingReferenceDate(dateController.text, timeController.text);
+    String referenceTime = getRouteAddingReferenceTime(timeController.text);
+    if(compareWithCurrentDate(referenceDate) > 0){
+      addTrip();
+    }
+    else if(compareWithCurrentDate(referenceDate) == 0){
+      if(compareWithCurrentTime(referenceTime)){
+        addTrip();
+      }
+    }
+    else{
+      setState(() {
+        failedAdding = true;
+        errorMessage = "Trip date and time are too soon";
+      });
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -155,33 +195,63 @@ class _FromUniversityFragmentState extends State<FromUniversityFragment> {
 
           SizedBox(height: 60,),
 
-          ElevatedButton(
-              onPressed: () async{
-                if(formKey.currentState!.validate()){
-                  SharedPreferences prefs = await SharedPreferences.getInstance();
-                  String? userId = prefs.getString('userId');
-                  routeDB.addNewRoute(
-                      userId!,
-                      pickupItem,
-                      destinationController.text,
-                      dateController.text,
-                      timeController.text,
-                      costController.text
-                  );
-                  Navigator.pop(context);
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: secondaryColor,
-                fixedSize: Size(1000, 50),
+          Column(
+            children: [
+              ElevatedButton(
+                  onPressed: () async{
+                    if(formKey.currentState!.validate()){
+                      handleAddingNewRoute();
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: secondaryColor,
+                    fixedSize: Size(1000, 50),
+                  ),
+                  child: Text('Add Route',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16
+                    ),
+                  )
               ),
-              child: Text('Add Route',
+
+              SizedBox(height: 8,),
+
+              Text(errorMessage,
+                textAlign: TextAlign.center,
                 style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16
+                    color: errorColor,
+                    fontSize: failedAdding? 14: 0
                 ),
-              )
-          )
+              ),
+
+              SizedBox(height: 8,),
+
+              TextButton(
+                onPressed: (){
+                  addTrip();
+                },
+                style: ButtonStyle(
+                  fixedSize: MaterialStatePropertyAll(Size(280, 0)),
+                  shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: darkRedColor,
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                      )
+                  ),
+                ),
+                child: Text('Forced Add Route',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: darkRedColor,
+                    )
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );

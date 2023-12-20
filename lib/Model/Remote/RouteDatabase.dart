@@ -30,4 +30,8 @@ class RouteDatabase{
     final usersDBRef = FirebaseDatabase.instance.ref().child('Users').child(driverId).child('Routes').child(key!);
     usersDBRef.set(route);
   }
+
+  void removeRoute(String routeId){
+    getRoutesDatabaseReference().child(routeId).remove();
+  }
 }

@@ -3,7 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 import '../../../Model/Remote/UserDatabase.dart';
-import '../../../resources/util.dart';
+import '../../../resources/TimeHelper.dart';
 import 'HistoryListItem.dart';
 
 
@@ -36,22 +36,8 @@ class _HistoryFragmentState extends State<HistoryFragment> {
   }
 
   bool checkIfExpired(Map route){
-    List<String> tripDate = route['Date'].split('-');
-    String tripTime = route['Time'];
-    String referenceDate = '';
-    String referenceTime = '';
-    if(tripTime == '7:30 AM'){
-      referenceTime = '11:30 PM';
-      referenceDate = DateTime(
-          int.parse(tripDate[0]),
-          int.parse(tripDate[1]),
-          int.parse(tripDate[2])-1
-      ).toString().split(' ')[0];
-    }
-    else if(tripTime == '5:30 PM'){
-      referenceTime = '04:30 PM';
-      referenceDate = tripDate.join('-');
-    }
+    String referenceDate = getRideConfirmationReferenceDate(route['Date'], route['Time']);
+    String referenceTime = getRideConfirmationReferenceTime(route['Time']);
     if(compareWithCurrentDate(referenceDate) > 0){
       return false;
     }

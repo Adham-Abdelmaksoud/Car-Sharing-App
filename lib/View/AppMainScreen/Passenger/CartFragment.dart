@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 import '../../../Model/Remote/UserDatabase.dart';
+import '../../../resources/TimeHelper.dart';
 import 'CartListItem.dart';
 
 class CartFragment extends StatefulWidget {
@@ -33,6 +34,20 @@ class _CartFragmentState extends State<CartFragment> {
     dataExists = snapshot.exists;
   }
 
+  bool checkIfStarted(Map route){
+    String referenceDate = route['Date'];
+    String referenceTime = route['Time'];
+    if(compareWithCurrentDate(referenceDate) > 0){
+      return false;
+    }
+    else if(compareWithCurrentDate(referenceDate) == 0){
+      if(compareWithCurrentTime(referenceTime)){
+        return false;
+      }
+    }
+    return true;
+  }
+
   @override
   void initState() {
     checkIfDataExists();
@@ -48,6 +63,11 @@ class _CartFragmentState extends State<CartFragment> {
           builder: (context, snapshot) {
             if(snapshot.hasData){
               List cartRoutes = getCartRoutesList(snapshot.data!);
+              for(int i=0 ; i<cartRoutes.length ; i++){
+                if(checkIfStarted(cartRoutes[i])){
+                  userDB.removeRouteFromPassengerCart(widget.passengerId, cartRoutes[i]['Key']);
+                }
+              }
               cartRoutes.sort((a, b) => a['Time'].compareTo(b['Time']));
               cartRoutes.sort((a, b) => a['Date'].compareTo(b['Date']));
               if(cartRoutes.isEmpty){

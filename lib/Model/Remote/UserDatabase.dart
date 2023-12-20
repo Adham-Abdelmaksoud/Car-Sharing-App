@@ -73,8 +73,11 @@ class UserDatabase{
     getDriverOrdersDatabaseReference(route['DriverId']).child(newKey).set(route);
   }
 
-  void removeRouteFromPassengerHistory(String userId, String routeId){
+  void removeRouteFromPassengerCart(String userId, String routeId){
     getPassengerCartDatabaseReference(userId).child(routeId).remove();
+  }
+  void removeRouteFromDriverRoutes(String userId, String routeId){
+    getDriverRoutesDatabaseReference(userId).child(routeId).remove();
   }
 
   void updateRouteStatus(String newStatus, String driverId, String passengerId, String routeId){

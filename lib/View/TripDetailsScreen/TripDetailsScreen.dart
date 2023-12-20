@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../Model/Remote/UserDatabase.dart';
 import '../../resources/colors.dart';
-import '../../resources/util.dart';
+import '../../resources/TimeHelper.dart';
 import 'DetailsSections.dart';
 
 class TripDetailsScreen extends StatefulWidget {
@@ -22,33 +22,6 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
 
   UserDatabase userDB = UserDatabase();
 
-  String getReferenceDate(String date, String time){
-    List<String> tripDate = date.split('-');
-    String referenceDate = '';
-    if(time == '7:30 AM'){
-      referenceDate = DateTime(
-          int.parse(tripDate[0]),
-          int.parse(tripDate[1]),
-          int.parse(tripDate[2])-1
-      ).toString().split(' ')[0];
-    }
-    else if(time == '5:30 PM'){
-      referenceDate = tripDate.join('-');
-    }
-    return referenceDate;
-  }
-
-  String getReferenceTime(String time){
-    String referenceTime = '';
-    if(time == '7:30 AM'){
-      referenceTime = '10:00 PM';
-    }
-    else if(time == '5:30 PM'){
-      referenceTime = '01:00 PM';
-    }
-    return referenceTime;
-  }
-
   void submitOrder(){
     widget.route['Cost'] = totalPrice;
     widget.route['Seats'] = numberOfSeats;
@@ -57,23 +30,24 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
     widget.route['PassengerId'] = widget.passengerId;
     widget.route['OrderDateTime'] = DateTime.now().toString();
     userDB.submitOrder(widget.route);
+
+    Navigator.pop(context);
+    ShowSnackBar(context, 'Order Confirmed Successfully', 1000, moneyColor);
   }
 
   void handleConfirmOrder(){
-    String referenceDate = getReferenceDate(widget.route['Date'], widget.route['Time']);
-    String referenceTime = getReferenceTime(widget.route['Time']);
+    String referenceDate = getRideOrderReferenceDate(widget.route['Date'], widget.route['Time']);
+    String referenceTime = getRideOrderReferenceTime(widget.route['Time']);
     if(compareWithCurrentDate(referenceDate) > 0){
       submitOrder();
-      Navigator.pop(context);
     }
     else if(compareWithCurrentDate(referenceDate) == 0){
       if(compareWithCurrentTime(referenceTime)){
         submitOrder();
-        Navigator.pop(context);
       }
     }
     else{
-      ShowSnackBar(context, 'This Trip has Expired!', 1000, darkRedColor);
+      ShowSnackBar(context, 'This Trip has Expired!', 1200, darkRedColor);
     }
   }
 
@@ -231,10 +205,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                                         TextButton(
                                           onPressed: (){
                                             submitOrder();
-                                            Navigator.pop(context);
                                           },
                                           style: ButtonStyle(
-                                            fixedSize: MaterialStatePropertyAll(Size(260, 0)),
+                                            fixedSize: MaterialStatePropertyAll(Size(280, 0)),
                                             shape: MaterialStateProperty.all(
                                               RoundedRectangleBorder(
                                                 side: BorderSide(

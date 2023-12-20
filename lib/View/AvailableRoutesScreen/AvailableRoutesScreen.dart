@@ -3,6 +3,7 @@ import 'package:car_sharing_app/resources/widgets.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import '../../resources/colors.dart';
+import '../../resources/TimeHelper.dart';
 import 'RoutesListItem.dart';
 
 class AvailableRoutesScreen extends StatefulWidget {
@@ -19,7 +20,7 @@ class _AvailableRoutesScreenState extends State<AvailableRoutesScreen> {
 
   RouteDatabase routesDB = RouteDatabase();
 
-  List filterRoutes(routes, pickupFilter, destinationFilter){
+  List filterRoutes(List routes, String pickupFilter, String destinationFilter){
     List filteredRoutes = List.from(routes);
     if(pickupFilter != ''){
       filteredRoutes = routes.where((element){
@@ -43,6 +44,20 @@ class _AvailableRoutesScreenState extends State<AvailableRoutesScreen> {
     List routesList = routesMap.values.toList();
     List filteredRoutes = filterRoutes(routesList, pickupFilter, destinationFilter);
     return filteredRoutes;
+  }
+
+  bool checkIfStarted(Map route){
+    String referenceDate = route['Date'];
+    String referenceTime = route['Time'];
+    if(compareWithCurrentDate(referenceDate) > 0){
+      return false;
+    }
+    else if(compareWithCurrentDate(referenceDate) == 0){
+      if(compareWithCurrentTime(referenceTime)){
+        return false;
+      }
+    }
+    return true;
   }
 
   @override
@@ -88,6 +103,11 @@ class _AvailableRoutesScreenState extends State<AvailableRoutesScreen> {
                   builder: (context, snapshot) {
                     if(snapshot.hasData){
                       List filteredRoutes = getFilteredRoutesList(snapshot.data!);
+                      for(int i=0 ; i<filteredRoutes.length ; i++){
+                        if(checkIfStarted(filteredRoutes[i])){
+                          routesDB.removeRoute(filteredRoutes[i]['Key']);
+                        }
+                      }
                       filteredRoutes.sort((a, b) => a['Time'].compareTo(b['Time']));
                       filteredRoutes.sort((a, b) => a['Date'].compareTo(b['Date']));
                       if(filteredRoutes.isEmpty){
