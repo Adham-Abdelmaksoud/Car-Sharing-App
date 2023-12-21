@@ -65,12 +65,17 @@ class UserDatabase{
     }
   }
   void submitOrder(Map route) async{
-    DatabaseReference newRef = getPassengerHistoryDatabaseReference(route['PassengerId']).push();
-    String newKey = await newRef.key!;
-    route['Key'] = newKey;
-    newRef.set(route);
+    DatabaseReference orderRef = getPassengerHistoryDatabaseReference(route['PassengerId']).push();
+    String orderKey = await orderRef.key!;
+    String routeKey = route['Key'];
+    route['Key'] = orderKey;
+    orderRef.set(route);
 
-    getDriverOrdersDatabaseReference(route['DriverId']).child(newKey).set(route);
+    getDriverOrdersDatabaseReference(route['DriverId']).child(orderKey).set(route);
+
+    getDriverRoutesDatabaseReference(route['DriverId']).child(routeKey).child('Passengers').child(route['PassengerId']).update({
+      'OrderId': orderKey
+    });
   }
 
   void removeRouteFromPassengerCart(String userId, String routeId){

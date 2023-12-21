@@ -13,6 +13,8 @@ class OrdersListItem extends StatefulWidget {
 class _OrdersListItemState extends State<OrdersListItem> {
   UserDatabase userDB = UserDatabase();
 
+  Map passengerInfo = {};
+
   Color getStatusColor(String status){
     if(status == 'Pending'){
       return textGreyColor;
@@ -26,6 +28,17 @@ class _OrdersListItemState extends State<OrdersListItem> {
     return primaryColor;
   }
 
+  void setPassengerInfo() async{
+    passengerInfo = await userDB.getUserInfo(widget.route['PassengerId']);
+    print(passengerInfo);
+  }
+
+  @override
+  void initState() {
+    setPassengerInfo();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -33,6 +46,42 @@ class _OrdersListItemState extends State<OrdersListItem> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 5, bottom: 7),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Text.rich(
+                    textAlign: TextAlign.center,
+                    TextSpan(
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: 'Passenger: ',
+                          style: TextStyle(color: textGreyColor,),
+                        ),
+                        TextSpan(
+                          text: passengerInfo['Username'],
+                          style: TextStyle(color: secondaryColor),
+                        )
+                      ]
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          Divider(
+            height: 5,
+            thickness: 0.5,
+            color: textGreyColor,
+          ),
+
           ListTile(
               minLeadingWidth: 0,
               contentPadding: EdgeInsets.all(0),
