@@ -48,7 +48,15 @@ class _LoginScreenState extends State<LoginScreen> {
     return userInfo['Role'];
   }
 
-  void signIn() async{
+  void signIn(SharedPreferences prefs, String userId){
+    navigateToMainScreen();
+    prefs.setString('userId', userId);
+    if(rememberMe){
+      prefs.setBool('rememberMe', true);
+    }
+  }
+
+  void handleSignIn() async{
     String email = emailController.text;
     String password = passwordController.text;
     setState(() {
@@ -60,11 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if(user != null){
       String userRole = await checkRole(user!.uid);
       if(userRole == roleValue){
-        navigateToMainScreen();
-        prefs.setString('userId', user!.uid);
-        if(rememberMe){
-          prefs.setBool('rememberMe', true);
-        }
+        signIn(prefs, user!.uid);
       }
       else{
         setState(() {
@@ -74,29 +78,51 @@ class _LoginScreenState extends State<LoginScreen> {
         });
       }
     }
-    else if(authenticateTestCredentials(email, password)){
-      navigateToMainScreen();
-      prefs.setString('userId', 'TestPassenger');
-      if(rememberMe){
-        prefs.setBool('rememberMe', true);
-      }
-    }
     else{
-      try {
-        final result = await InternetAddress.lookup('google.com');
-        if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+      int roleCode = authenticateTestCredentials(email, password);
+      if(roleCode == 1){
+        String userRole = await checkRole('TestPassenger');
+        if(userRole == roleValue){
+          signIn(prefs, 'TestPassenger');
+        }
+        else{
           setState(() {
             failedLogin = true;
             loading = false;
-            loginErrorMessage = 'Incorrect Email or Password';
+            loginErrorMessage = 'This account is registered as $userRole not $roleValue';
           });
         }
-      } on SocketException catch (_) {
-        setState(() {
-          failedLogin = true;
-          loading = false;
-          loginErrorMessage = 'Unable to connect to internet';
-        });
+      }
+      else if(roleCode == -1){
+        String userRole = await checkRole('TestDriver');
+        if(userRole == roleValue){
+          signIn(prefs, 'TestDriver');
+        }
+        else{
+          setState(() {
+            failedLogin = true;
+            loading = false;
+            loginErrorMessage = 'This account is registered as $userRole not $roleValue';
+          });
+        }
+      }
+      else{
+        try {
+          final result = await InternetAddress.lookup('google.com');
+          if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+            setState(() {
+              failedLogin = true;
+              loading = false;
+              loginErrorMessage = 'Incorrect Email or Password';
+            });
+          }
+        } on SocketException catch (_) {
+          setState(() {
+            failedLogin = true;
+            loading = false;
+            loginErrorMessage = 'Unable to connect to internet';
+          });
+        }
       }
     }
   }
@@ -263,7 +289,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     onPressed: (){
                       if(loginKey.currentState!.validate()){
-                        signIn();
+                        handleSignIn();
                       }
                     },
                     child: loading? SizedBox(

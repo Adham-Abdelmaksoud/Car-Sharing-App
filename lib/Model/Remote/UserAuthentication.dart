@@ -1,11 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
-bool authenticateTestCredentials(email, password){
-  email = email.trim();
+int authenticateTestCredentials(String email, String password){
+  email = email.trim().toLowerCase();
   if(email == 'passenger@eng.asu.edu.eg' && password == 'test1234'){
-    return true;
+    return 1;
   }
-  return false;
+  if(email == 'driver@eng.asu.edu.eg' && password == 'test5678'){
+    return -1;
+  }
+  return 0;
 }
 
 class UserAuthenticator{
@@ -36,7 +39,7 @@ class UserAuthenticator{
       return credential.user;
     }
     catch(e){
-    print('Authentication Error during Signup');
+      print('Authentication Error during Signup');
     }
     return null;
   }
