@@ -82,23 +82,23 @@ class _HistoryListItemState extends State<HistoryListItem> {
             )
           ),
 
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 10),
-                child: Text('Status: ${widget.route['Status']}',
-                  style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold,
-                    color: getStatusColor(widget.route['Status']),
-                  )
-                ),
-              ),
-
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Text('Status: ${widget.route['Status']}',
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                          color: getStatusColor(widget.route['Status']),
+                        )
+                    ),
+                  ),
+
                   Row(
                     children: [
                       Text('Seats: ',
@@ -117,24 +117,25 @@ class _HistoryListItemState extends State<HistoryListItem> {
                       ),
                     ],
                   ),
+                ],
+              ),
 
-                  Row(
-                    children: [
-                      Text('${widget.route['Payment']}: ',
-                        style: TextStyle(
-                          fontSize: 19,
-                          fontWeight: FontWeight.bold,
-                          color: textGreyColor,
-                        )
-                      ),
-                      Text('${widget.route['Cost']} EGP',
-                        style: TextStyle(
-                          fontSize: 19,
-                          fontWeight: FontWeight.bold,
-                          color: moneyColor,
-                        )
-                      ),
-                    ],
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text('${widget.route['Payment']}: ',
+                    style: TextStyle(
+                      fontSize: 19,
+                      fontWeight: FontWeight.bold,
+                      color: textGreyColor,
+                    )
+                  ),
+                  Text('${widget.route['Cost']} EGP',
+                    style: TextStyle(
+                      fontSize: 19,
+                      fontWeight: FontWeight.bold,
+                      color: moneyColor,
+                    )
                   ),
                 ],
               ),

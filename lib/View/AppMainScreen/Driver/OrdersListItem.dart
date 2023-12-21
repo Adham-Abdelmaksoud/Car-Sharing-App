@@ -135,22 +135,22 @@ class _OrdersListItemState extends State<OrdersListItem> {
 
           Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: Text('Status: ${widget.route['Status']}',
-                      style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold,
-                        color: getStatusColor(widget.route['Status']),
-                      )
-                    ),
-                  ),
-
-                  Column(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: Text('Status: ${widget.route['Status']}',
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                              color: getStatusColor(widget.route['Status']),
+                            )
+                        ),
+                      ),
+
                       Row(
                         children: [
                           Text('Seats: ',
@@ -169,24 +169,25 @@ class _OrdersListItemState extends State<OrdersListItem> {
                           ),
                         ],
                       ),
+                    ],
+                  ),
 
-                      Row(
-                        children: [
-                          Text('${widget.route['Payment']}: ',
-                            style: TextStyle(
-                              fontSize: 19,
-                              fontWeight: FontWeight.bold,
-                              color: textGreyColor,
-                            )
-                          ),
-                          Text('${widget.route['Cost']} EGP',
-                            style: TextStyle(
-                              fontSize: 19,
-                              fontWeight: FontWeight.bold,
-                              color: moneyColor,
-                            )
-                          ),
-                        ],
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text('${widget.route['Payment']}: ',
+                        style: TextStyle(
+                          fontSize: 19,
+                          fontWeight: FontWeight.bold,
+                          color: textGreyColor,
+                        )
+                      ),
+                      Text('${widget.route['Cost']} EGP',
+                        style: TextStyle(
+                          fontSize: 19,
+                          fontWeight: FontWeight.bold,
+                          color: moneyColor,
+                        )
                       ),
                     ],
                   ),
