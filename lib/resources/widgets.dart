@@ -6,6 +6,7 @@ Widget LoginSignupTextField({
   TextEditingController? controller,
   String? Function(String?)? validator,
   String? hintText,
+  TextInputType? keyboardType,
   bool obscureText=false,
 }){
   return SizedBox(
@@ -13,6 +14,7 @@ Widget LoginSignupTextField({
     child: TextFormField(
       cursorHeight: 20,
       obscureText: obscureText,
+      keyboardType: keyboardType,
       controller: controller,
       validator: validator,
       decoration: InputDecoration(

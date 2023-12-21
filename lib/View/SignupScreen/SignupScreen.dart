@@ -166,6 +166,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
                         LoginSignupTextField(
                           hintText: "Phone Number",
+                          keyboardType: TextInputType.number,
                           controller: phoneNumberController,
                           validator: (value){
                             if(value == null || value.isEmpty){
