@@ -16,7 +16,6 @@ bool compareTimes(String currentTime, String referenceTime){
     }
   }
 }
-
 int compareDates(String currentDate, String referenceDate){
   if(currentDate.compareTo(referenceDate) < 0){
     return 1;
@@ -29,35 +28,35 @@ int compareDates(String currentDate, String referenceDate){
   }
 }
 
+String formatDatePart(int part){
+  String formattedPart = '';
+  if(part < 10){
+    formattedPart = '0$part';
+  }
+  else{
+    formattedPart = '$part';
+  }
+  return formattedPart;
+}
+
 int compareWithCurrentDate(String referenceDate){
   String currentDate = DateTime.now().toString().split(' ')[0];
   return compareDates(currentDate, referenceDate);
 }
-
 bool compareWithCurrentTime(String referenceTime){
   DateTime currentDateTime = DateTime.now();
 
   String currentHour = '';
-  String currentMinute = '';
+  String currentMinute = formatDatePart(currentDateTime.minute);
   String timePeriod = '';
+
   if(currentDateTime.hour >= 12){
-    currentHour = '${currentDateTime.hour - 12}';
+    currentHour = formatDatePart(currentDateTime.hour - 12);
     timePeriod = 'PM';
   }
   else{
-    if(currentDateTime.hour < 10){
-      currentHour = '0${currentDateTime.hour}';
-    }
-    else{
-      currentHour = '${currentDateTime.hour}';
-    }
+    currentHour = formatDatePart(currentDateTime.hour);
     timePeriod = 'AM';
-  }
-  if(currentDateTime.minute < 10){
-    currentMinute = '0${currentDateTime.minute}';
-  }
-  else{
-    currentMinute = '${currentDateTime.minute}';
   }
   String currentTime = '$currentHour:$currentMinute $timePeriod';
   return compareTimes(currentTime, referenceTime);
@@ -104,7 +103,6 @@ String getRideOrderReferenceDate(String date, String time){
   else if(time == '05:30 PM'){
     referenceDate = tripDate.join('-');
   }
-  print(referenceDate);
   return referenceDate;
 }
 
@@ -141,7 +139,7 @@ String getRouteAddingReferenceTime(String time){
     referenceTime = '09:00 PM';
   }
   else if(time == '05:30 PM'){
-    referenceTime = '12:00 PM';
+    referenceTime = '00:00 PM';
   }
   return referenceTime;
 }

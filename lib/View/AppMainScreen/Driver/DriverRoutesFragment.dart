@@ -115,7 +115,7 @@ class _DriverRoutesFragmentState extends State<DriverRoutesFragment> {
                     itemBuilder: (context, index){
                       return Card(
                         color: primaryColor,
-                        child: RoutesListItem(route: routes[index])
+                        child: RoutesListItem(route: routes[index], driverId: widget.driverId,)
                       );
                     }
                   ),

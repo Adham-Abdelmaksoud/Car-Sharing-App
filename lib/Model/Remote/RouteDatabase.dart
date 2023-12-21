@@ -23,11 +23,12 @@ class RouteDatabase{
       'Destination': destination,
       'Date': date,
       'Time': time,
-      'Cost': cost
+      'Cost': cost,
     };
     newRef.set(route);
 
     final usersDBRef = FirebaseDatabase.instance.ref().child('Users').child(driverId).child('Routes').child(key!);
+    route['State'] = 'Waiting';
     usersDBRef.set(route);
   }
 

@@ -122,10 +122,12 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                                               SeatsDetails(
                                                 numberOfSeats: numberOfSeats,
                                                 onIncrease: (){
-                                                  setState(() {
-                                                    numberOfSeats++;
-                                                    totalPrice = numberOfSeats * int.parse(widget.route['Cost']);
-                                                  });
+                                                  if(numberOfSeats < 6){
+                                                    setState(() {
+                                                      numberOfSeats++;
+                                                      totalPrice = numberOfSeats * int.parse(widget.route['Cost']);
+                                                    });
+                                                  }
                                                 },
                                                 onDecrease: (){
                                                   if(numberOfSeats > 1){

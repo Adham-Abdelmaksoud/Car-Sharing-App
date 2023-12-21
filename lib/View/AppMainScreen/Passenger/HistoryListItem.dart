@@ -14,13 +14,16 @@ class _HistoryListItemState extends State<HistoryListItem> {
     if(status == 'Pending'){
       return textGreyColor;
     }
-    else if(status == 'Confirmed'){
+    else if(status == 'Confirmed' || status == 'Finished'){
       return moneyColor;
     }
     else if(status == 'Cancelled' || status == 'Expired'){
       return errorColor;
     }
-    return primaryColor;
+    else if(status == 'Started'){
+      return secondaryColor;
+    }
+    return textGreyColor;
   }
 
   @override

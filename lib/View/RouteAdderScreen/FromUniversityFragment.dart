@@ -183,6 +183,9 @@ class _FromUniversityFragmentState extends State<FromUniversityFragment> {
                   if(value == null || value.isEmpty){
                     return 'Cost cannot be empty!';
                   }
+                  if(int.parse(value) >= 500){
+                    return 'Cost must be less than 500 EGP!';
+                  }
                   return null;
                 },
                 decoration: InputDecoration(

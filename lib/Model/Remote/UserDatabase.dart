@@ -19,6 +19,7 @@ class UserDatabase{
 
 
 
+
   Future<Map> getUserInfo(String userId) async{
     DataSnapshot snapshot = await getUserDatabaseReference(userId).get();
     Map user = snapshot.value as Map;
@@ -53,6 +54,7 @@ class UserDatabase{
 
 
 
+
   Future<bool> addRouteToPassengerCart(String userId, Map route) async{
     final dbRef = FirebaseDatabase.instance.ref().child('Users').child(userId).child('Cart').child(route['Key']);
     DataSnapshot snapshot = await dbRef.get();
@@ -73,10 +75,25 @@ class UserDatabase{
 
     getDriverOrdersDatabaseReference(route['DriverId']).child(orderKey).set(route);
 
-    getDriverRoutesDatabaseReference(route['DriverId']).child(routeKey).child('Passengers').child(route['PassengerId']).update({
-      'OrderId': orderKey
-    });
+    DatabaseReference passengerOrderRef = getDriverRoutesDatabaseReference(route['DriverId']).child(routeKey)
+        .child('Passengers')
+        .child(route['PassengerId'])
+        .child('Orders')
+        .push();
+    passengerOrderRef.set(orderKey);
   }
+
+  Future<Map> getAllOrderingPassengers(String driverId, String routeId) async{
+    DatabaseReference passengersRef = getDriverRoutesDatabaseReference(driverId).child(routeId).child('Passengers');
+
+    DataSnapshot snapshot = await passengersRef.get();
+    Map orderingPassengersMap = snapshot.value as Map;
+
+    return orderingPassengersMap;
+  }
+
+
+
 
   void removeRouteFromPassengerCart(String userId, String routeId){
     getPassengerCartDatabaseReference(userId).child(routeId).remove();
@@ -88,5 +105,29 @@ class UserDatabase{
   void updateRouteStatus(String newStatus, String driverId, String passengerId, String routeId){
     getDriverOrdersDatabaseReference(driverId).child(routeId).update({'Status': newStatus});
     getPassengerHistoryDatabaseReference(passengerId).child(routeId).update({'Status': newStatus});
+  }
+
+
+
+
+
+  void updateTripState(String newState, String driverId, String routeId) async{
+    getDriverRoutesDatabaseReference(driverId).child(routeId).update({'State': newState});
+
+    Map passengers = await getAllOrderingPassengers(driverId, routeId);
+    for(var passengerId in passengers.keys){
+      List passengerOrdersIds = passengers[passengerId]['Orders'].values.toList();
+      for(var orderId in passengerOrdersIds){
+        DatabaseReference historyOrderRef = getPassengerHistoryDatabaseReference(passengerId).child(orderId);
+        DatabaseReference pendingOrderRef = getDriverOrdersDatabaseReference(driverId).child(orderId);
+
+        DataSnapshot snapshot = await historyOrderRef.get();
+        Map passengerOrderData = snapshot.value as Map;
+        if(passengerOrderData['Status'] == 'Confirmed' || passengerOrderData['Status'] == 'Started'){
+          historyOrderRef.update({'Status': newState});
+          pendingOrderRef.update({'Status': newState});
+        }
+      }
+    }
   }
 }
