@@ -40,14 +40,8 @@ class _SplashScreenState extends State<SplashScreen> {
     }
   }
 
-  void removeSharedPreferences() async{
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove('rememberMe');
-  }
-
   @override
   void initState() {
-    // removeSharedPreferences();
     Timer(Duration(seconds: 2), (){
       rememberMeLogin();
     });

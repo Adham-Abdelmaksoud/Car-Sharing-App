@@ -20,13 +20,6 @@ class _DriverRoutesFragmentState extends State<DriverRoutesFragment> {
 
   bool dataExists = true;
 
-  void copyRoutesToPassenger() async{
-    List routes = await userDB.getDriverRoutes(widget.driverId);
-    for(int i=0 ; i<routes.length ; i++){
-      FirebaseDatabase.instance.ref().child('Routes').child(routes[i]['Key']).set(routes[i]);
-    }
-  }
-
   List getRoutesList(DatabaseEvent streamSnapshotData){
     DataSnapshot databaseSnapshot = streamSnapshotData.snapshot;
     if(!databaseSnapshot.exists){
@@ -58,7 +51,6 @@ class _DriverRoutesFragmentState extends State<DriverRoutesFragment> {
 
   @override
   void initState() {
-    // copyRoutesToPassenger();
     checkIfDataExists();
     super.initState();
   }
@@ -88,11 +80,11 @@ class _DriverRoutesFragmentState extends State<DriverRoutesFragment> {
           builder: (context, snapshot) {
             if(snapshot.hasData){
               List routes = getRoutesList(snapshot.data!);
-              for(int i=0 ; i<routes.length ; i++){
-                if(checkIfStarted(routes[i])){
-                  userDB.removeRouteFromDriverRoutes(widget.driverId, routes[i]['Key']);
-                }
-              }
+              // for(int i=0 ; i<routes.length ; i++){
+              //   if(checkIfStarted(routes[i])){
+              //     userDB.removeRouteFromDriverRoutes(widget.driverId, routes[i]['Key']);
+              //   }
+              // }
               routes.sort((a, b) => a['Time'].compareTo(b['Time']));
               routes.sort((a, b) => a['Date'].compareTo(b['Date']));
               if(routes.isEmpty){
