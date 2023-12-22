@@ -45,6 +45,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
       if(compareWithCurrentTime(referenceTime)){
         submitOrder();
       }
+      else{
+        ShowSnackBar(context, 'This Trip has Expired!', 1200, darkRedColor);
+      }
     }
     else{
       ShowSnackBar(context, 'This Trip has Expired!', 1200, darkRedColor);
