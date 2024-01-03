@@ -54,7 +54,14 @@ class _RoutesListItemState extends State<RoutesListItem> {
 
   void goToCurrentState(){
     if(widget.route['State'] == 'Waiting'){
-      if(compareWithCurrentDate(widget.route['Date']) <= 0){
+      if(compareWithCurrentDate(widget.route['Date']) < 0){
+        userDB.updateTripState('Ready', widget.route['DriverId'], widget.route['Key']);
+        setState(() {
+          widget.route['State'] = 'Ready';
+          availableAction = 'Start';
+        });
+      }
+      else if(compareWithCurrentDate(widget.route['Date']) == 0){
         if(!compareWithCurrentTime(widget.route['Time'])){
           userDB.updateTripState('Ready', widget.route['DriverId'], widget.route['Key']);
           setState(() {
